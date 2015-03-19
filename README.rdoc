@@ -1,0 +1,11 @@
+# Jellyfish::Fog::Azure
+
+Module for adding Microsoft Azure support to Jellyfish API through the use of Fog
+
+## Installation
+Add this line to the Jellyfish Gemfile
+```ruby
+gem 'jellyfish-fog-azure
+```
+And execute:
+    $ bundle
