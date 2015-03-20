@@ -13,4 +13,4 @@ gemspec
 # To use a debugger
 # gem 'byebug', group: [:development, :test]
 
-gem 'fog-azure', :git => 'https://github.com/projectjellyfish/fog-azure.git', :branch => 'hotfix/issue_4_create_compute_class'
+gem 'fog-azure', :git => 'https://github.com/projectjellyfish/fog-azure.git', :ref => 'feature/issue_7_sqldatabase_features'
