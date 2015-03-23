@@ -4,8 +4,8 @@ module Jellyfish
   module Fog
     module Azure
       describe StorageProduct do
-        let(:order_item){ double('order item', id: 1, uuid: 'u12345-c2579', answers: {location: 'East US'}) }
-        let(:retire_order_item) { double('order item', id: 1, uuid: 'u12345-c2579', payload_response: {:name=>"storageu12345c", :location=>"East US"}) }
+        let(:order_item) { double('order item', id: 1, uuid: 'u12345-c2579', answers: { location: 'East US' }) }
+        let(:retire_order_item) { double('order item', id: 1, uuid: 'u12345-c2579', payload_response: { name: 'storageu12345c', location: 'East US' }) }
         it 'returns an appropriate provisioner' do
           expect(StorageProduct.new.provisioner).to eq(Storage)
         end
