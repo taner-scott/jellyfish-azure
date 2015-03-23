@@ -10,4 +10,3 @@ module Jellyfish
     end
   end
 end
-
