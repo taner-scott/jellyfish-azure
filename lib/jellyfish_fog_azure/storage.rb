@@ -27,9 +27,9 @@ module Jellyfish
         def connection
           ::Fog::Compute.new(
             provider: 'Azure',
-            azure_sub_id: azure_settings['sub_id'],
-            azure_pem: azure_settings['pem_path'],
-            azure_api_url: azure_settings['api_url']
+            azure_sub_id: azure_settings[:sub_id],
+            azure_pem: azure_settings[:pem_path],
+            azure_api_url: azure_settings[:api_url]
           )
         end
 
