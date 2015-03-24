@@ -4,8 +4,8 @@ module Jellyfish
   module Fog
     module Azure
       describe InfrastructureProduct do
-        let(:order_item) { double('order item', id: 1, answers: { vm_name: 'test_name', vm_user: 'admin', image: 'abcd', location: 'East Asia', cloud_service_name: 'testjellyfish', certificate_file: 'azure-cert.cer', private_key_file: 'azure-cert.pem' }) }
-        let(:retire_order_item) { double('order item', id: 1, payload_response: { vm_name: 'test_name', vm_user: 'admin', image: 'abcd', location: 'East Asia', cloud_service_name: 'testjellyfish' }) }
+        let(:order_item) { double('order item', id: 1, answers: { vm_name: 'test_name', vm_user: 'admin', image: '0b11de9248dd4d87b18621318e037d37__RightImage-CentOS-6.2-x64-v5.8.8.1', location: 'East Asia', cloud_service_name: 'testjellyfish', certificate_file: 'azure-cert.cer', private_key_file: 'azure-cert.pem' }) }
+        let(:retire_order_item) { double('order item', id: 1, payload_response: { vm_name: 'test_name', vm_user: 'admin', image: '0b11de9248dd4d87b18621318e037d37__RightImage-CentOS-6.2-x64-v5.8.8.1', location: 'East Asia', cloud_service_name: 'testjellyfish' }) }
         ENV['AZURE_SUB_ID'] = 'abcdefg'
         ENV['AZURE_PEM_PATH'] = 'azure-cert.pem'
         ENV['AZURE_API_URL'] = 'https://management.core.windows.net'
