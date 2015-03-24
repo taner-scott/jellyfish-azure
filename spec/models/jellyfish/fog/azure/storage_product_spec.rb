@@ -6,6 +6,10 @@ module Jellyfish
       describe StorageProduct do
         let(:order_item) { double('order item', id: 1, uuid: 'u12345-c2579', answers: { location: 'East US' }) }
         let(:retire_order_item) { double('order item', id: 1, uuid: 'u12345-c2579', payload_response: { name: 'storageu12345c', location: 'East US' }) }
+        ENV['AZURE_SUB_ID'] = 'abcdefg'
+        ENV['AZURE_PEM_PATH'] = 'azure-cert.pem'
+        ENV['AZURE_API_URL'] = 'https://management.core.windows.net'
+        ::Fog.mock!
         it 'returns an appropriate provisioner' do
           expect(StorageProduct.new.provisioner).to eq(Storage)
         end
