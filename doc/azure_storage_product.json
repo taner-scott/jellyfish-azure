@@ -1,0 +1,13 @@
+{
+  "type": "object",
+  "title": "Sql Database",
+  "required": ["location"],
+  "properties":{
+  "location":{
+  "title": "Database location",
+  "type": "string",
+  "enum": [],
+  "default": ""
+    }
+  }
+}
