@@ -4,7 +4,6 @@ module Jellyfish
   module Fog
     module Azure
       describe Validation do
-        
         ENV['AZURE_SUB_ID'] = 'abcdefg'
         ENV['AZURE_PEM_PATH'] = 'fake.pem'
         ENV['AZURE_API_URL'] = 'https://management.core.windows.net'
