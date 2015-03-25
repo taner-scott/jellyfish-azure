@@ -8,11 +8,11 @@ Adds abilities to provision storage, VMs, and SQL Database Servers
 ## Installation
 Include in the gemfile
 ```
-gem 'jellyfish-fog-azure'
+gem 'jellyfish--azure'
 ```
 or download from GitHub and reference locally:
 ```
-gem 'jellyfish-fog-azure', path: '../jellyfish-azure'
+gem 'jellyfish-azure', path: '../jellyfish-azure'
 ```
 
 Add settings to your .env file:

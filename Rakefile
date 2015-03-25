@@ -4,6 +4,9 @@ rescue LoadError
   puts 'You must `gem install bundler` and `bundle install` to run rake tasks'
 end
 
+class Provisioner; end
+task :default => :test
+
 require 'rdoc/task'
 
 RDoc::Task.new(:rdoc) do |rdoc|
