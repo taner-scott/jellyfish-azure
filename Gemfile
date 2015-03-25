@@ -16,7 +16,10 @@ gemspec
 gem 'rails', '4.1.7'
 # Tests
 
-gem 'fog-azure', git: 'https://github.com/projectjellyfish/fog-azure.git', ref: 'feature/issue_7_sqldatabase_features'
+gem 'fog-azure', git: 'https://github.com/projectjellyfish/fog-azure.git'
+
+# .Env gem Gem
+gem 'dotenv-rails'
 
 group :development, :test do
   gem 'annotate'
