@@ -14,7 +14,7 @@ gemspec
 # gem 'byebug', group: [:development, :test]
 
 # Tests
-
+gem 'azure'
 gem 'fog-azure', git: 'https://github.com/projectjellyfish/fog-azure.git'
 
 group :development, :test do

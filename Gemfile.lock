@@ -11,8 +11,10 @@ GIT
 PATH
   remote: .
   specs:
-    jellyfish-azure (0.0.1)
+    jellyfish-azure (0.0.3)
+      azure
       dotenv-rails
+      fog-azure
       rails
 
 GEM
@@ -255,6 +257,7 @@ PLATFORMS
 DEPENDENCIES
   annotate
   awesome_print
+  azure
   brakeman
   codeclimate-test-reporter
   database_cleaner (~> 1.3.0)

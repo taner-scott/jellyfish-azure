@@ -1,13 +1,10 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
-require 'fog/azure'
 ENV['RAILS_ENV'] ||= 'test'
-
 # Create a fake provisioner class to store fake credentials for testing
 class Provisioner
   attr_reader :order_item
 
   # TODO: Better testing system
-  ::Fog.mock! # Set fog as mock.
 
   def initialize(order_item)
     @order_item = order_item
