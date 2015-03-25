@@ -4,7 +4,7 @@ module Jellyfish
   module Fog
     module Azure
       describe Validation do
-        ENV['JF_AZURE_SUB_ID'] = 'abcdef'
+        ENV['JF_AZURE_SUB_ID'] = 'abcdefg'
         ENV['JF_AZURE_PEM_PATH'] = 'azure-cert.pem'
         ENV['JF_AZURE_API_URL'] = 'https://management.core.windows.net'
         mock = Jellyfish::Fog::Azure::Mock.new
