@@ -17,6 +17,13 @@ module Jellyfish
           order_item.should_receive(:payload_response=).with a_kind_of(Hash)
           Databases.new(order_item).provision
         end
+
+        it 'creates a new database server' do
+          mock.mock!
+          order_item.should_receive(:provision_status=).with(:ok)
+          order_item.should_receive(:payload_response=).with a_kind_of(Hash)
+          Databases.new(order_item).provision
+        end
       end
     end
   end

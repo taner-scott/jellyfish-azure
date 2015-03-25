@@ -14,12 +14,10 @@ module Jellyfish
           mock.mock!
           expect(StorageProduct.new.provisioner).to eq(Storage)
         end
+
         it 'gets a connection' do
-          if mock.mock?
-            expect(Storage.new(order_item).connection).to be_a_kind_of(::Fog::Compute::Azure::Mock)
-          else
-            expect(Storage.new(order_item).connection).to be_a_kind_of(::Fog::Compute::Azure::Real)
-          end
+          mock.mock!
+          expect(Storage.new(order_item).connection).to be_a_kind_of(::Fog::Compute::Azure::Mock)
         end
 
         it 'creates and retires a new storage account' do
