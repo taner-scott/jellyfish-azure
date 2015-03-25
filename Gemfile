@@ -13,13 +13,9 @@ gemspec
 # To use a debugger
 # gem 'byebug', group: [:development, :test]
 
-gem 'rails', '4.1.7'
 # Tests
 
 gem 'fog-azure', git: 'https://github.com/projectjellyfish/fog-azure.git'
-
-# .Env gem Gem
-gem 'dotenv-rails'
 
 group :development, :test do
   gem 'annotate'
