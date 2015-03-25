@@ -9,12 +9,13 @@ module Jellyfish
         ENV['JF_AZURE_SUB_ID'] = 'abcdefg'
         ENV['JF_AZURE_PEM_PATH'] = 'azure-cert.pem'
         ENV['JF_AZURE_API_URL'] = 'https://management.core.windows.net'
-        ::Fog.mock!
+        mock = Jellyfish::Fog::Azure::Mock.new
         it 'returns an appropriate provisioner' do
+          mock.mock!
           expect(StorageProduct.new.provisioner).to eq(Storage)
         end
         it 'gets a connection' do
-          if ::Fog.mock?
+          if mock.mock?
             expect(Storage.new(order_item).connection).to be_a_kind_of(::Fog::Compute::Azure::Mock)
           else
             expect(Storage.new(order_item).connection).to be_a_kind_of(::Fog::Compute::Azure::Real)
@@ -22,6 +23,7 @@ module Jellyfish
         end
 
         it 'creates and retires a new storage account' do
+          mock.mock!
           order_item.should_receive(:provision_status=).with(:ok)
           order_item.should_receive(:payload_response=).with a_kind_of(Hash)
 
