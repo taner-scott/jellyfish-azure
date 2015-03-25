@@ -15,11 +15,8 @@ module Jellyfish
         end
 
         it 'gets a connection' do
-          if mock.mock?
-            expect(Infrastructure.new(order_item).connection).to be_a_kind_of(::Fog::Compute::Azure::Mock)
-          else
-            expect(Infrastructure.new(order_item).connection).to be_a_kind_of(::Fog::Compute::Azure::Real)
-          end
+          mock.mock!
+          expect(Infrastructure.new(order_item).connection).to be_a_kind_of(::Fog::Compute::Azure::Mock)
         end
 
         it 'provisions and destroys a new server' do
