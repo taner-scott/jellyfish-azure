@@ -20,14 +20,6 @@ class Provisioner
   def self.retire(order_item_id)
     perform(order_item_id, :warning_retirement_error) { |order_item| new(order_item).retire }
   end
-
-  def azure_settings
-    {
-      'sub_id' => 'microsoftsubscriptionid', # your subscription id
-      'pem_path' => 'azure-cert.pem', # your pem path
-      'api_url' => 'https://management.core.windows.net'
-    }
-  end
 end
 
 require File.expand_path('../dummy/config/environment', __FILE__)
