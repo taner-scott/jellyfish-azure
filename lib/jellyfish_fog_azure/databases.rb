@@ -13,6 +13,14 @@ module Jellyfish
           order_item.payload_response = server.instance_values.merge(password: password)
         end
 
+        def retire
+          name = order_item.payload_response[:name]
+          handle_errors do
+            connection.delete_database(name)
+          end
+          order_item.provision_status = :retired
+        end
+
         def connection
           Connection.new.connect
         end
