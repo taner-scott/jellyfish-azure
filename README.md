@@ -17,7 +17,7 @@ gem 'jellyfish-fog-azure', path: '../jellyfish-azure'
 
 Add settings to your .env file:
 ```
-    AZURE_SUB_ID                = YOUR AZURE SUBSCRIPTION ID
-    AZURE_PEM_PATH              = YOUR AZURE PEM PATH
-    AZURE_API_URL               = https://management.core.windows.net
+    JF_AZURE_SUB_ID                = YOUR AZURE SUBSCRIPTION ID
+    JF_AZURE_PEM_PATH              = YOUR AZURE PEM PATH
+    JF_AZURE_API_URL               = https://management.core.windows.net
 ```
