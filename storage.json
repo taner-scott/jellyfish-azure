@@ -1,13 +1,34 @@
 {
   "type": "object",
-  "title": "Sql Database",
-  "required": ["location"],
+  "title": "Storage",
+  "required": ["location", "name"],
   "properties":{
-  "location":{
-  "title": "Database location",
-  "type": "string",
-  "enum": [],
-  "default": ""
+    "provisioning_answers[location]" : {
+      "title" : "Storage location",
+      "type": "string",
+      "enum": [
+        "Central US",
+        "East US",
+        "East US 2",
+        "US Gov Iowa",
+        "US Gov Virginia",
+        "North Central US",
+        "South Central US",
+        "West US",
+        "North Europe",
+        "West Europe",
+        "East Asia",
+        "Southeast Asia",
+        "Japan East",
+        "Japan West",
+        "Brazil South",
+        "Australia East",
+        "Australia Southeast"
+      ]
+    },
+    "provisioning_answers[name]":{
+      "title":"Storage name",
+      "type": "string"
     }
   }
 }
