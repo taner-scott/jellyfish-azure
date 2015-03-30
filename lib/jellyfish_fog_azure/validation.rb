@@ -12,10 +12,9 @@ module Jellyfish
           # Will return an error if the connection is incorrect
           # Ensuring it is a valid test
           server_list.is_a?(Array) || !server_list.nil? ? valid = true : valid = false
-          valid ? save_images_json(server_list) : save_images_json(server_list)
+          valid ? save_images_json(server_list) : valid
           rescue StandardError => e
             valid = false
-            puts "PUTS AN ERROR HAS BEEN CAUGHT: #{e.message}"
           ensure
             return valid
         end

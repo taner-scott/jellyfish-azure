@@ -1,11 +1,9 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV['RAILS_ENV'] ||= 'test'
+
 # Create a fake provisioner class to store fake credentials for testing
 class Provisioner
   attr_reader :order_item
-
-  # TODO: Better testing system
-
   def initialize(order_item)
     @order_item = order_item
   end
@@ -17,6 +15,25 @@ class Provisioner
   def self.retire(order_item_id)
     perform(order_item_id, :warning_retirement_error) { |order_item| new(order_item).retire }
   end
+end
+
+class ProductType
+  def self.create_with(dummy)
+    ProductType
+  end
+  private
+  def self.find_or_create_by!(dummy)
+  end
+end
+
+class QuestionFormSchema
+  def initialize(dummy)
+
+  end
+end
+
+def find_or_create_by!
+
 end
 
 require File.expand_path('../dummy/config/environment', __FILE__)

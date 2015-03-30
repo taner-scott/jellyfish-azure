@@ -9,10 +9,11 @@ module Jellyfish
         ENV['JF_AZURE_API_URL'] = 'https://management.core.windows.net'
         mock = Jellyfish::Fog::Azure::Mock.new
 
-        it 'returns a false true for valid credentials' do
-          mock.mock!
+        it 'returns a false false for invalid credentials' do
+          # NOTE: This will return a ForbiddenError
+          mock.unmock!
           validated = Validation.new.validate
-          expect(validated).to eq(true)
+          expect(validated).to eq(false)
         end
       end
     end
