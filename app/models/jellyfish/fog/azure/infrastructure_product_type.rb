@@ -1,13 +1,13 @@
 module Jellyfish
   module Fog
     module Azure
-      class DatabaseProductType
-        DESCRIPTION = 'Database'.freeze
-        PRODUCT_CLASS = DatabaseProduct
+      class InfrastructureProductType
+        DESCRIPTION = 'Infrastructure'.freeze
+        PRODUCT_CLASS = InfrastructureProduct
         PRODUCT_QUESTIONS = JSON.parse(
           File.read(
             Jellyfish::Fog::Azure::Engine.root.join(
-              *%w(config product_questions database.json)
+              *%w(config product_questions infrastructure.json)
             )
           )
         ).freeze
