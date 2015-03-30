@@ -11,21 +11,22 @@ module Jellyfish
           # Can return nil if no servers are present.
           # Will return an error if the connection is incorrect
           # Ensuring it is a valid test
-          server_list.is_a?(Array) || server_list.nil? ? valid = true : valid = false
-          valid ? save_images_json(server_list) : valid
+          server_list.is_a?(Array) || !server_list.nil? ? valid = true : valid = false
+          valid ? save_images_json(server_list) : save_images_json(server_list)
           rescue StandardError => e
             valid = false
+            puts "PUTS AN ERROR HAS BEEN CAUGHT: #{e.message}"
           ensure
             return valid
         end
 
+        # TODO: need to add the update to the database
         def save_images_json images
           json_array = []
           images.each do |image|
-            hash = image.name
-            json_array << hash
+            json_array << image.name
           end
-          file_name = File.expand_path('../../../infrastructure.json', __FILE__)
+          file_name = File.expand_path('../../../config/product_questions/infrastructure.json', __FILE__)
           json_file = File.read(file_name)
           data_hash = JSON.parse(json_file)
           data_hash['properties']['image']['enum'] = json_array

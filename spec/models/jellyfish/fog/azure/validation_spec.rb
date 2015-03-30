@@ -5,14 +5,14 @@ module Jellyfish
     module Azure
       describe Validation do
         ENV['JF_AZURE_SUB_ID'] = 'fake'
-        ENV['JF_AZURE_PEM_PATH'] = 'fake.pem'
+        ENV['JF_AZURE_PEM_PATH'] = 'azure-cert.pem'
         ENV['JF_AZURE_API_URL'] = 'https://management.core.windows.net'
         mock = Jellyfish::Fog::Azure::Mock.new
 
-        it 'returns a false value for invalid credentials' do
-          mock.unmock!
+        it 'returns a false true for valid credentials' do
+          mock.mock!
           validated = Validation.new.validate
-          expect(validated).to eq(false)
+          expect(validated).to eq(true)
         end
       end
     end
