@@ -6,7 +6,24 @@
     "location":{
       "title": "Database location",
       "type": "string",
-      "enum": [],
+      "enum": [
+        "Central US",
+        "East US",
+        "East US 2",
+        "US Gov Iowa",
+        "US Gov Virginia",
+        "North Central US",
+        "South Central US",
+        "West US",
+        "North Europe",
+        "West Europe",
+        "East Asia",
+        "Southeast Asia",
+        "Japan East",
+        "Japan West",
+        "Brazil South",
+        "Australia East",
+        "Australia Southeast"],
       "default": ""
     }
   }

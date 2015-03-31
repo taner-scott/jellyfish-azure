@@ -1,1 +1,18 @@
-{"type":"object","title":"Infrastructure","required":["image","location","vm_name"],"properties":{"image":{"title":"Server image","type":"string","enum":["Ubuntu-13_04-amd64-server-20130601-en-us-30GB"],"default":""},"location":{"title":"Server location","type":"string","enum":[],"default":""},"vm_name":{"title":"Server name","type":"string","default":""},"storage_account_name":{"title":"Storage account name","type":"string","default":""}}}
+{"type":"object","title":"Infrastructure","required":["image","location","vm_name"],"properties":{"image":{"title":"Server image","type":"string","enum":["Ubuntu-13_04-amd64-server-20130601-en-us-30GB"],"default":""},"location":{"title":"Server location","type":"string","enum":[
+  "Central US",
+  "East US",
+  "East US 2",
+  "US Gov Iowa",
+  "US Gov Virginia",
+  "North Central US",
+  "South Central US",
+  "West US",
+  "North Europe",
+  "West Europe",
+  "East Asia",
+  "Southeast Asia",
+  "Japan East",
+  "Japan West",
+  "Brazil South",
+  "Australia East",
+  "Australia Southeast"],"default":""},"vm_name":{"title":"Server name","type":"string","default":""},"storage_account_name":{"title":"Storage account name","type":"string","default":""}}}
