@@ -10,7 +10,7 @@ module Jellyfish
         mock = Jellyfish::Fog::Azure::Mock.new
 
         it 'returns a false false for invalid credentials' do
-          # NOTE: This will return a ForbiddenError
+          # NOTE: This will return a ForbiddenError. Can be ignored
           mock.unmock!
           validated = Validation.new.validate
           expect(validated).to eq(false)

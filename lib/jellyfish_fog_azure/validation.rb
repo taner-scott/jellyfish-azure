@@ -2,17 +2,20 @@ module Jellyfish
   module Fog
     module Azure
       class Validation
+        def get_servers
+          Connection.new.connect.list_images
+        end
         # This function will return a true false value based
         # off of whether the credentials provided in the .env file
         # are valid
         def validate
-          server_list = Connection.new.connect.list_images
+          server_list = get_servers
           valid = false
           # Can return nil if no servers are present.
           # Will return an error if the connection is incorrect
           # Ensuring it is a valid test
           server_list.is_a?(Array) || !server_list.nil? ? valid = true : valid = false
-          valid ? save_images_json(server_list) : valid
+          valid && !::Fog.mock? ? save_images_json(server_list) : valid
           rescue StandardError => e
             valid = false
           ensure
