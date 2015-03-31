@@ -5,7 +5,7 @@ module Jellyfish
     module Azure
       describe StorageProduct do
         let(:order_item) { double('order item', id: 1, uuid: 'u12345-c2579', answers: { location: 'East US' }) }
-        let(:retire_order_item) { double('order item', id: 1, uuid: 'u12345-c2579', payload_response: { name: 'storageu12345c', location: 'East US' }) }
+        let(:retire_order_item) { double('retire order item', id: 1, uuid: 'u12345-c2579', payload_response: { name: 'storageu12345c', location: 'East US' }) }
         ENV['JF_AZURE_SUB_ID'] = 'abcdefg'
         ENV['JF_AZURE_PEM_PATH'] = 'azure-cert.pem'
         ENV['JF_AZURE_API_URL'] = 'https://management.core.windows.net'
@@ -22,12 +22,12 @@ module Jellyfish
 
         it 'creates and retires a new storage account' do
           mock.mock!
-          order_item.should_receive(:provision_status=).with(:ok)
-          order_item.should_receive(:payload_response=).with a_kind_of(Hash)
+          expect(order_item).to receive(:provision_status=).with(:ok)
+          expect(order_item).to receive(:payload_response=).with a_kind_of(Hash)
 
           Storage.new(order_item).provision
 
-          retire_order_item.should_receive(:provision_status=).with(:retired)
+          expect(retire_order_item).to receive(:provision_status=).with(:retired)
 
           Storage.new(retire_order_item).retire
         end

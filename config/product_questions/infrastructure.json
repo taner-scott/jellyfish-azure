@@ -15,4 +15,4 @@
   "Japan West",
   "Brazil South",
   "Australia East",
-  "Australia Southeast"],"default":""},"vm_name":{"title":"Server name","type":"string","default":""},"storage_account_name":{"title":"Storage account name","type":"string","default":""}}}
+  "Australia Southeast"],"default":""},"vm_name":{"title":"Server name","type":"string","default":""},"storage_account_name":{"title":"Storage account name","type":"string","default":"East US"}}}

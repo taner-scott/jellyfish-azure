@@ -14,14 +14,16 @@ module Jellyfish
 
         it 'creates a new database server' do
           mock.mock!
-          order_item.should_receive(:provision_status=).with(:ok)
-          order_item.should_receive(:payload_response=).with a_kind_of(Hash)
+          expect(order_item).to receive(:provision_status=).with(:ok)
+          expect(order_item).to receive(:payload_response=).with a_kind_of(Hash)
+
           Databases.new(order_item).provision
         end
 
         it 'retires a server' do
           mock.mock!
-          retire_order_item.should_receive(:provision_status=).with(:retired)
+          expect(retire_order_item).to receive(:provision_status=).with(:retired)
+
           Databases.new(retire_order_item).retire
         end
       end
