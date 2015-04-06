@@ -20,7 +20,7 @@ module Jellyfish
           PRODUCT_QUESTIONS
         end
 
-        def self.as_json(_)
+        def self.as_json(*)
           { DESCRIPTION => PRODUCT_QUESTIONS }
         end
       end

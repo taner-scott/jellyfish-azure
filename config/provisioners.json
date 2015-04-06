@@ -1,0 +1,5 @@
+{
+  "Azure Databases": "Jellyfish::Fog::Azure::Databases",
+  "Azure Storage": "Jellyfish::Fog::Azure::Storage",
+  "Azure Infrastructure": "Jellyfish::Fog::Azure::Infrastructure"
+}
