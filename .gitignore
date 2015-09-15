@@ -1,0 +1,18 @@
+gnore spec database.
+spec/dummy/db
+
+# Ignore log and tmp files.
+log
+tmp
+spec/dummy/log
+spec/dummy/tmp
+
+
+# Ignore RubyMine files
+.idea
+
+# Ignore dotenv file
+.env
+
+# Ignore Gemfile lock
+Gemfile.lock
