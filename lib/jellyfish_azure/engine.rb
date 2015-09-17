@@ -6,9 +6,6 @@ module JellyfishAzure
       g.test_framework :rspec, fixture: false
     end
 
-    # Just to make sure the module is loading
-    puts "Loading jellyfish-azure..."
-
     # Initializer to combine this engines static assets with the static assets of the hosting site.
     initializer 'static assets' do |app|
       app.middleware.insert_before(::ActionDispatch::Static, ::ActionDispatch::Static, "#{root}/public")
@@ -16,11 +13,21 @@ module JellyfishAzure
 
     initializer 'jellyfish_azure.load_registered_providers', :before => :load_config_initializers do
       begin
-          puts "Loading asdf " + __FILE__
         if RegisteredProvider.table_exists?
-          puts "Loading " + __FILE__
           Dir[File.expand_path "../../../app/models/registered_provider/*", __FILE__].each do |file|
-            puts "sdfasdf"
+            require_dependency file
+          end
+        end
+      rescue
+        #ignored
+        nil
+      end
+    end
+
+    initializer 'jellyfish_aws.load_product_types', :before => :load_config_initializers do
+      begin
+        if ProductType.table_exists?
+          Dir[File.expand_path '../../../app/models/product_type/*.rb', __FILE__].each do |file|
             require_dependency file
           end
         end

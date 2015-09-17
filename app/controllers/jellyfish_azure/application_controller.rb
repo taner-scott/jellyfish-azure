@@ -1,6 +1,6 @@
 module JellyfishAzure
   class ApplicationController < ::ApplicationController
-	rescue_from Fog::Compute::AWS::Error, with: :aws_error
+#	rescue_from Fog::Compute::AWS::Error, with: :aws_error
 
     protected
 

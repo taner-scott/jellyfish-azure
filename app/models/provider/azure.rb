@@ -1,6 +1,6 @@
 class Provider < ActiveRecord::Base
   class Azure < Provider
-    def azureLocations
+    def azure_locations
       [ "eastus", "centralus", "westus" ]
     end
   end

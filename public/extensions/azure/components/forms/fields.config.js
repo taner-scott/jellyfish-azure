@@ -26,16 +26,30 @@
     });
 */
 
-    Forms.fields('azure_locations', {
+    Forms.fields('azure_location', {
       type: 'async_select',
       templateOptions: {
         label: 'Locations',
         options: []
       },
       data: {
-        action: 'azureLocations'
+        action: 'azure_locations'
       },
       controller: AzureDataController
+    });
+
+    Forms.fields('azure_storage_accountType', {
+      type: 'select',
+      templateOptions: {
+        label: 'Region',
+        options: [
+          {label: 'Standard LRS', value: 'Standard_LRS'},
+          {label: 'Standard ZRS', value: 'Standard_ZRS'},
+          {label: 'Standard GRS', value: 'Standard_GRS'},
+          {label: 'Standard RAGRS', value: 'Standard_RAGRS'},
+          {label: 'Premium LRS', value: 'Premium_LRS'}
+        ]
+      }
     });
 
     /** @ngInject */
