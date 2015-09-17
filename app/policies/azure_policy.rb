@@ -1,5 +1,5 @@
 class AzurePolicy < ApplicationPolicy
   def azure_locations?
-    any_user!
+    logged_in?
   end
 end

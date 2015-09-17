@@ -9,12 +9,12 @@
     var base = '/api/v1/azure/providers/:id/:action';
     var AzureData = $resource(base, {action: '@action', id: '@id'});
 
-    AzureData.azureLocations = azureLocations;
+    AzureData.azure_locations = azureLocations;
 
-    return AwsData;
+    return AzureData;
 
     function azureLocations(id) {
-      return AwsData.query({id: id, action: 'azureLocations'}).$promise;
+      return AzureData.query({id: id, action: 'azure_locations'}).$promise;
     }
   }
 })();
