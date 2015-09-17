@@ -18,7 +18,6 @@ Gem::Specification.new do |s|
 
   s.test_files = Dir['spec/**/*']
   s.add_dependency 'rails', '~> 4.2'
-  s.add_dependency 'fog-aws', '~> 0.7'
   s.add_dependency 'bcrypt', '~> 3.1'
 
   s.add_development_dependency 'rspec-rails', '~> 3.3'
