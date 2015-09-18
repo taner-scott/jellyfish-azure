@@ -28,6 +28,8 @@ class ProductType < ActiveRecord::Base
 
     def order_questions
       [
+        { name: :storage_name, value_type: :string, field: :azure_storage_name, required: true },
+        { name: :resource_group_name, value_type: :string, field: :azure_resource_group_name, required: true },
         { name: :location, value_type: :string, field: :azure_location, required: true }
       ]
     end

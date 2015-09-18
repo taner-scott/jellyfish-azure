@@ -26,10 +26,24 @@
     });
 */
 
+    Forms.fields('azure_storage_name', {
+      type: 'text',
+      templateOptions: {
+        label: 'Name'
+      }
+    });
+
+    Forms.fields('azure_resource_group_name', {
+      type: 'text',
+      templateOptions: {
+        label: 'Resource Group'
+      }
+    });
+
     Forms.fields('azure_location', {
       type: 'async_select',
       templateOptions: {
-        label: 'Locations',
+        label: 'Location',
         options: []
       },
       data: {
@@ -41,7 +55,7 @@
     Forms.fields('azure_storage_accountType', {
       type: 'select',
       templateOptions: {
-        label: 'Region',
+        label: 'Type',
         options: [
           {label: 'Standard LRS', value: 'Standard_LRS'},
           {label: 'Standard ZRS', value: 'Standard_ZRS'},

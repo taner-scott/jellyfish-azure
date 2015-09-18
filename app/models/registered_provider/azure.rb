@@ -23,9 +23,10 @@ class RegisteredProvider < ActiveRecord::Base
 
     def questions
       [
+        { name: :subscription_id, value_type: :string, field: :text, label: 'Subscription ID', required: true },
+        { name: :tenant_id, value_type: :string, field: :text, label: 'Tenant ID', required: true },
         { name: :client_id, value_type: :string, field: :text, label: 'Client ID', required: true },
         { name: :client_secret, value_type: :password, field: :password, label: 'Client Secret', required: :if_new }
-        #{ name: :region, value_type: :string, field: :aws_regions, required: true }
       ]
     end
   end
