@@ -1,12 +1,12 @@
 module JellyfishAzure
   class ApplicationController < ::ApplicationController
-#	rescue_from Fog::Compute::AWS::Error, with: :aws_error
+    rescue_from Exception, with: :azure_error
 
     protected
 
-#    def aws_error(ex)
-#      message, type = ex.message.split(' => ').reverse
-#      render json: {type: type, error: message}, status: :bad_request
-#    end
+    def azure_error(ex)
+      puts ex.to_s
+      render json: {type: type, error: ex.to_s}, status: :bad_request
+    end
   end
 end

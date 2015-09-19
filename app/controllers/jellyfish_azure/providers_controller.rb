@@ -1,16 +1,23 @@
+
 module JellyfishAzure
-  class ProvidersController < JellyfishAws::ApplicationController
+  class ProvidersController < JellyfishAzure::ApplicationController
     after_action :verify_authorized
 
     def azure_locations
       authorize :azure
-      render json: provider.azure_locations
+      results = provider.azure_locations
+      render json: results
+    end
+
+    def azure_resource_groups
+      authorize :azure
+      render json: provider.azure_resource_groups
     end
 
     private
 
     def provider
-      @provider ||= Provider.find params[:id]
+      @provider ||= ::Provider.find params[:id]
     end
   end
 end

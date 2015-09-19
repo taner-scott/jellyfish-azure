@@ -10,11 +10,16 @@
     var AzureData = $resource(base, {action: '@action', id: '@id'});
 
     AzureData.azure_locations = azureLocations;
+    AzureData.azure_resource_groups = azureResourceGroups;
 
     return AzureData;
 
     function azureLocations(id) {
       return AzureData.query({id: id, action: 'azure_locations'}).$promise;
+    }
+
+    function azureResourceGroups(id) {
+      return AzureData.query({id: id, action: 'azure_resource_groups'}).$promise;
     }
   }
 })();

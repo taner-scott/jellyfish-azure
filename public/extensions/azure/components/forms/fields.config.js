@@ -6,26 +6,6 @@
 
   /** @ngInject */
   function initFields(Forms) {
-    /*
-    Forms.fields('azure_regions', {
-      type: 'select',
-      templateOptions: {
-        label: 'Region',
-        options: [
-          {label: 'N. Virginia (US-East-1)', value: 'us-east-1', group: 'US'},
-          {label: 'N. California (US-West-1)', value: 'us-west-1', group: 'US'},
-          {label: 'Oregon (US-West-2)', value: 'us-west-2', group: 'US'},
-          {label: 'Ireland (EU-West-1)', value: 'eu-west-1', group: 'Europe'},
-          {label: 'Frankfurt (EU-Central-1)', value: 'eu-central-1', group: 'Europe'},
-          {label: 'Singapore (AP-Southeast-1)', value: 'ap-southeast-1', group: 'Asia Pacific'},
-          {label: 'Sydney (AP-Southeast-2)', value: 'ap-southeast-2', group: 'Asia Pacific'},
-          {label: 'Tokyo (AP-Northeast-1)', value: 'ap-northeast-1', group: 'Asia Pacific'},
-          {label: 'Sãn Paulo (SA-East-1)', value: 'sa-east-1', group: 'South America'}
-        ]
-      }
-    });
-*/
-
     Forms.fields('azure_storage_name', {
       type: 'text',
       templateOptions: {
@@ -34,10 +14,15 @@
     });
 
     Forms.fields('azure_resource_group_name', {
-      type: 'text',
+      type: 'async_select',
       templateOptions: {
-        label: 'Resource Group'
-      }
+        label: 'Resource Group',
+        options: []
+      },
+      data: {
+        action: 'azure_resource_groups'
+      },
+      controller: AzureDataController
     });
 
     Forms.fields('azure_location', {

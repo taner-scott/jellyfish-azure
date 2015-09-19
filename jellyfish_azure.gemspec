@@ -19,7 +19,8 @@ Gem::Specification.new do |s|
   s.test_files = Dir['spec/**/*']
   s.add_dependency 'rails', '~> 4.2'
   s.add_dependency 'bcrypt', '~> 3.1'
-  s.add_dependency 'azure_mgmt_storage'
+  s.add_dependency 'azure_mgmt_storage', '~> 0.1'
+  s.add_dependency 'azure_mgmt_resources', '~> 0.1'
 
   s.add_development_dependency 'rspec-rails', '~> 3.3'
   s.add_development_dependency 'factory_girl_rails', '~> 4.5'
