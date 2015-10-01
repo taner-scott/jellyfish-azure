@@ -6,7 +6,7 @@ module JellyfishAzure
 
     def azure_error(ex)
       puts ex.to_s
-      render json: {type: type, error: ex.to_s}, status: :bad_request
+      render json: {error: ex.to_s}, status: :bad_request
     end
   end
 end
