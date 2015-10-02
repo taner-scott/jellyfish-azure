@@ -3,7 +3,7 @@ require 'azure_mgmt_storage'
 require 'azure_mgmt_resources'
 require 'json'
 
-require "jellyfish_azure/engine"
+require 'jellyfish_azure/engine'
 
 module JellyfishAzure
 end

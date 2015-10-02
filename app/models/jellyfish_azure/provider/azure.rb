@@ -5,8 +5,8 @@ module JellyfishAzure
     class Azure < ::Provider
       def azure_locations
         [
-          { label: "US East", value: "eastus" },
-          { label: "US West", value: "westus" }
+          { label: 'US East', value: 'eastus' },
+          { label: 'US West', value: 'westus' }
         ]
       end
 
@@ -28,15 +28,15 @@ module JellyfishAzure
 
       def credentials
         @credentials ||= begin
-          tenantId = settings[:tenant_id]
-          clientId = settings[:client_id]
-          clientSecret = settings[:client_secret]
-          token_provider = MsRestAzure::ApplicationTokenProvider.new(tenantId, clientId, clientSecret)
+          tenant_id = settings[:tenant_id]
+          client_id = settings[:client_id]
+          client_secret = settings[:client_secret]
+          token_provider = MsRestAzure::ApplicationTokenProvider.new(tenant_id, client_id, client_secret)
           MsRest::TokenCredentials.new(token_provider)
         end
       end
 
-      def subscriptionId
+      def subscription_id
         settings[:subscription_id]
       end
     end

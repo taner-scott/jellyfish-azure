@@ -18,7 +18,7 @@ module JellyfishAzure
       end
 
       def tags
-        ['azure', 'storage']
+        %w(azure storage)
       end
 
       def product_questions
