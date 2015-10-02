@@ -1,20 +1,20 @@
-$:.push File.expand_path("../lib", __FILE__)
+$LOAD_PATH.push File.expand_path('../lib', __FILE__)
 
 # Maintain your gem's version:
-require "jellyfish_azure/version"
+require 'jellyfish_azure/version'
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "jellyfish-azure"
+  s.name        = 'jellyfish-azure'
   s.version     = JellyfishAzure::VERSION
-  s.authors     = [""]
-  s.email       = [""]
+  s.authors     = ['']
+  s.email       = ['']
   s.homepage    = 'http://github.com/projectjellyfish/jellyfish-azure'
-  s.summary     = "Adds Azure products to Jellyfish"
-  s.description = "Adds Azure ... to Jellyfish"
-  s.license     = "MIT"
+  s.summary     = 'Adds Azure products to Jellyfish'
+  s.description = 'Adds Azure ... to Jellyfish'
+  s.license     = 'MIT'
 
-  s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
+  s.files = Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.rdoc']
 
   s.test_files = Dir['spec/**/*']
   s.add_dependency 'rails', '~> 4.2'

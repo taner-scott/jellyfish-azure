@@ -9,10 +9,10 @@ module JellyfishAzure
         actions
       end
 
-      def provision order, product
+      def provision(order, product)
         # Create a client - a point of access to the API and set the subscription id
         client = Azure::ARM::Storage::StorageManagementClient.new(product.provider.credentials)
-        client.subscription_id = product.provider.subscriptionId
+        client.subscription_id = product.provider.subscription_id
 
         # Create a model for new storage account.
         properties = Azure::ARM::Storage::Models::StorageAccountPropertiesCreateParameters.new
@@ -26,9 +26,8 @@ module JellyfishAzure
 
         result = promise.value!
 
-        #Handle the result
+        # Handle the result
         result.body
-
       end
 
       def terminate
