@@ -14,15 +14,11 @@ module JellyfishAzure
         client = Azure::ARM::Resources::ResourceManagementClient.new(product.provider.credentials)
         client.subscription_id = product.provider.subscriptionId
 
-        # Create a model for new resource group account.
-        properties = Azure::ARM::Resources::Models::ResourceGroupPropertiesCreateParameters.new
-        properties.account_type = product.settings[:resource_group_accountType]
+        # Create a model for resource group.
+        resource_group = Azure::ARM::Resources::Models::ResourceGroup.new()
+        resource_group.location = order.settings[:location]
 
-        params = Azure::ARM::Resources::Models::ResourceGroupCreateParameters.new
-        params.properties = properties
-        params.location = order.settings[:location]
-
-        promise = client.resource_group.create(order.settings[:resource_group_name], order.settings[:resource_name], params)
+        promise = client.resource_groups.create_or_update('new_test_resource_group', resource_group)
 
         result = promise.value!
 
