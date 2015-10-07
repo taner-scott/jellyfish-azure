@@ -1,0 +1,124 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "projectName": {
+      "type": "string",
+      "metadata": {
+        "description": "Unique name for the project."
+      }
+    },
+    "serviceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Unique name for the service."
+      }
+    },
+    "webTechnology":  {
+      "type": "string",
+      "allowedValues": [
+        "ASP_NET",
+        "Ruby"
+      ],
+      "metadata": {
+        "description": "Choice of the web server technologies available for the dev server."
+      }
+    },
+    "dbTechnology":  {
+      "type": "string",
+      "allowedValues": [
+        "SQLServer",
+        "Postgres"
+      ],
+      "metadata": {
+        "description": "Choice of the database server technologies available for the dev server."
+      }
+    },
+    "dnsNameForPublicIP": {
+      "type": "string",
+      "metadata": {
+        "description": "Unique DNS Name for the Public IP used to access the IIS server."
+      }
+    },
+    "adminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "Username for the Virtual Machine."
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Password for the Virtual Machine."
+      }
+    }
+  },
+  "outputs": {
+    "publicIP": {
+      "type": "object",
+      "value": "[reference(variables('virtualNetworkName'))]"
+    }
+  },
+  "variables": {
+    "location": "West US",
+    "storageAccountName": "[parameters('serviceName')]",
+    "storageAccountType": "Standard_LRS",
+    "publicIPAddressName": "[concat(parameters('serviceName'), '_publicIPAddress')]",
+    "virtualNetworkName": "[concat(parameters('serviceName'), '_vnet')]",
+    "subnetName": "[concat(parameters('serviceName'), '_subnet')]",
+    "addressPrefix": "10.0.0.0/16",
+    "subnetPrefix": "10.0.0.0/24",
+    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
+    "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
+
+    "serverIPPrefix": "10.0.0.",
+    "webServerNicName": "[concat(parameters('serviceName'), '_webServerNic')]",
+    "sqlServerNicName": "[concat(parameters('serviceName'), '_sqlServerNic')]",
+
+    "webServerVmName": "[concat(parameters('serviceName'), '_webServerVm')]",
+    "webServerVmSize": "Basic_A0",
+    "webServerMachineName": "webserver",
+    "webServerImagePublisher": "MicrosoftWindowsServer",
+    "webServerImageOffer": "WindowsServer",
+    "webServerImageSKU": "2012-R2-Datacenter",
+
+    "sqlServerVmName": "[concat(parameters('serviceName'), '_sqlServerVm')]",
+    "sqlServerVmSize": "Basic_A0",
+    "sqlServerMachineName": "sqlserver",
+    "sqlServerImagePublisher": "MicrosoftSQLServer",
+    "sqlServerImageOffer": "SQL2014-WS2012R2",
+    "sqlServerImageSKU": "Standard"
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('virtualNetworkName')]",
+      "location": "[variables('location')]",
+      "tags": {
+        "Project": "[parameters('projectName')]",
+        "Service": "[parameters('serviceName')]",
+        "Web": "[parameters('webTechnology')]",
+        "DB": "[parameters('dbTechnology')]",
+        "DNS": "[parameters('dnsNameForPublicIP')]",
+        "Username": "[parameters('adminUsername')]",
+        "Password": "[parameters('adminPassword')]"
+      },
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('addressPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('subnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('subnetPrefix')]"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
