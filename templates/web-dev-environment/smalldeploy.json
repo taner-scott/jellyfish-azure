@@ -55,8 +55,8 @@
   },
   "outputs": {
     "publicIP": {
-      "type": "object",
-      "value": "[reference(variables('virtualNetworkName'))]"
+      "type": "string",
+      "value": "[reference(variables('virtualNetworkName')).addressSpace.addressPrefixes[0]]"
     }
   },
   "variables": {
