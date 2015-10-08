@@ -6,6 +6,26 @@
 
   /** @ngInject */
   function initFields(Forms) {
+    Forms.fields('az_dev_web', {
+      type: 'select',
+      templateOptions: {
+        options: [
+          {label: 'ASP.NET', value: 'ASP_NET'},
+          {label: 'Ruby', value: 'Ruby'}
+        ]
+      }
+    });
+
+    Forms.fields('az_dev_db', {
+      type: 'select',
+      templateOptions: {
+        options: [
+          {label: 'MS Sql Server', value: 'SQLServer'},
+          {label: 'Postgres', value: 'Postgres'}
+        ]
+      }
+    });
+
     Forms.fields('azure_storage_name', {
       type: 'text',
       templateOptions: {
