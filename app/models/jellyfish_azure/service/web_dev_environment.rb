@@ -28,20 +28,30 @@ module JellyfishAzure
         save
 
         outputs = monitor_deployment 'Deployment'
-        self.status = :available
-        save
 
         # TODO: handle writing status message and outputs to service
-        puts outputs.to_json
+        self.status = :available
+        self.status_msg = outputs.to_json
+        save
+
         outputs
 
+      rescue AzureDeploymentErrors => e
+        self.status = :terminated
+        self.status_msg = e.errors.map { |error| error.error_message }.join "\n"
+        save
       rescue MsRestAzure::AzureOperationError => e
-        self.status = :available
+        self.status = :terminated
+
+        if e.body.nil?
+          self.status_msg = e.message
+        else
+          self.status_msg = e.body['error']['message']
+        end
+
         save
 
         puts e.body.to_json
-        puts e.backtrace.join("\n")
-        raise
       rescue => e
         self.status = :available
         save

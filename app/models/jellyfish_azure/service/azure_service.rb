@@ -1,5 +1,31 @@
 module JellyfishAzure
   module Service
+
+    class AzureDeploymentError
+      # @return [Azure::ARM::Resources::Models::TargetResource] Gets or sets the target resource.
+      attr_accessor :target_resource
+
+      # @return [String] Gets or sets the error message.
+      attr_accessor :error_message
+
+      def initialize(deployment_operation)
+        @target_resource = deployment_operation.properties.target_resource
+        @error_message = deployment_operation.properties.status_message['error']['message']
+      end
+    end
+
+    class AzureDeploymentErrors < StandardError
+
+      # @return [Array] the varioud  response body.
+      attr_accessor :errors
+
+      def initialize(deployment_operations)
+        @errors = deployment_operations.value
+          .select { |item| item.properties.provisioning_state == "Failed" }
+          .map { |item| AzureDeploymentError.new(item) }
+      end
+    end
+
     class AzureService < ::Service::Storage
 
       def client
@@ -58,11 +84,18 @@ module JellyfishAzure
 
           done = (state != "Accepted" and state != "Running")
 
-          sleep(30) if not done
+          sleep(10) if not done
         end
 
         # TODO: handle deployment timeout
-        Hash[result.body.properties.outputs.map { |key, value| [ key, value['value'] ] }]
+        if (state == 'Failed')
+          promise = client.deployment_operations.list resource_group_name, deployment_name
+          result = promise.value!
+
+          raise AzureDeploymentErrors.new(result.body)
+        else
+          Hash[result.body.properties.outputs.map { |key, value| [ key, value['value'] ] }]
+        end
       end
     end
   end
