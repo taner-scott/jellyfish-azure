@@ -31,7 +31,8 @@ module JellyfishAzure
 
         # TODO: handle writing status message and outputs to service
         self.status = :available
-        self.status_msg = outputs.to_json
+        outputs.each { |key, output| self.service_outputs.create(name: key, value: output, value_type: :string) }
+        self.status_msg = "Deployment successful"
         save
 
         outputs

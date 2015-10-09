@@ -44,7 +44,7 @@ module JellyfishAzure
       end
 
       def monitor_deployment(deployment_name)
-        state = 'Accepted'
+        result = nil
         WaitUtil.wait_for_condition 'deployment', :timeout_sec => 14400, :delay_sec => 15 do
           promise = client.deployments.get resource_group_name, deployment_name
           result = promise.value!
@@ -53,6 +53,7 @@ module JellyfishAzure
           (state != "Accepted" and state != "Running")
         end
 
+        state = result.body.properties.provisioning_state
         if (state == 'Failed')
           promise = client.deployment_operations.list resource_group_name, deployment_name
           result = promise.value!
