@@ -1,33 +1,7 @@
+
 module JellyfishAzure
   module Service
-
-    class AzureDeploymentError
-      # @return [Azure::ARM::Resources::Models::TargetResource] Gets or sets the target resource.
-      attr_accessor :target_resource
-
-      # @return [String] Gets or sets the error message.
-      attr_accessor :error_message
-
-      def initialize(deployment_operation)
-        @target_resource = deployment_operation.properties.target_resource
-        @error_message = deployment_operation.properties.status_message['error']['message']
-      end
-    end
-
-    class AzureDeploymentErrors < StandardError
-
-      # @return [Array] the varioud  response body.
-      attr_accessor :errors
-
-      def initialize(deployment_operations)
-        @errors = deployment_operations.value
-          .select { |item| item.properties.provisioning_state == "Failed" }
-          .map { |item| AzureDeploymentError.new(item) }
-      end
-    end
-
     class AzureService < ::Service::Storage
-
       def client
         @_client ||= begin
           result = Azure::ARM::Resources::ResourceManagementClient.new product.provider.credentials
@@ -71,21 +45,30 @@ module JellyfishAzure
       end
 
       def monitor_deployment(deployment_name)
-        done = false
-        attempts = 0
-
-        while attempts < 240 and not done
-
-          attempts += 1
-
+        state = 'Accepted'
+        WaitUtil.wait_for_condition 'deployment', :timeout_sec => 14400, :delay_sec => 15 do
           promise = client.deployments.get resource_group_name, deployment_name
           result = promise.value!
+
           state = result.body.properties.provisioning_state
-
-          done = (state != "Accepted" and state != "Running")
-
-          sleep(10) if not done
+          (state != "Accepted" and state != "Running")
         end
+
+
+#        done = false
+#        attempts = 0
+
+ #       while attempts < 240 and not done
+ #         attempts += 1
+
+  #        promise = client.deployments.get resource_group_name, deployment_name
+  #        result = promise.value!
+  #        state = result.body.properties.provisioning_state
+
+   #       done = (state != "Accepted" and state != "Running")
+
+    #      sleep(10) unless done
+     #   end
 
         # TODO: handle deployment timeout
         if (state == 'Failed')
