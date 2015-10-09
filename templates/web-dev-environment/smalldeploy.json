@@ -17,8 +17,8 @@
     "webTechnology":  {
       "type": "string",
       "allowedValues": [
-        "ASP_NET",
-        "Ruby"
+        "aspnet",
+        "ruby"
       ],
       "metadata": {
         "description": "Choice of the web server technologies available for the dev server."
@@ -27,8 +27,8 @@
     "dbTechnology":  {
       "type": "string",
       "allowedValues": [
-        "SQLServer",
-        "Postgres"
+        "mssqlserver",
+        "postgres"
       ],
       "metadata": {
         "description": "Choice of the database server technologies available for the dev server."
@@ -55,8 +55,8 @@
   },
   "outputs": {
     "publicIP": {
-      "type": "string",
-      "value": "[reference(variables('virtualNetworkName')).addressSpace.addressPrefixes[0]]"
+      "type": "object",
+      "value": "[reference(variables('virtualNetworkName'))]"
     }
   },
   "variables": {

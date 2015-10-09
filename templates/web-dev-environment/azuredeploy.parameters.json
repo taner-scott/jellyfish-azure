@@ -2,26 +2,23 @@
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "projectName": {
-      "value": "TestProject"
-    },
     "serviceName": {
-      "value": "predeekcjelly1"
+      "value": "jellyfish1"
     },
     "webTechnology": {
-      "value": "ASP_NET"
+      "value": "aspnet"
     },
     "dbTechnology": {
-      "value": "Postgres"
+      "value": "postgres"
     },
     "dnsNameForPublicIP": {
-      "value": "predeekcjelly1"
+      "value": "jellyfish1"
     },
     "adminUsername": {
       "value": "jellyfish"
     },
     "adminPassword": {
-      "value": "Jungle#Tree1"
+      "value": "jellyfish"
     }
   }
 }
