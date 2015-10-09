@@ -1,4 +1,3 @@
-
 module JellyfishAzure
   module Service
     class AzureService < ::Service::Storage
@@ -54,23 +53,6 @@ module JellyfishAzure
           (state != "Accepted" and state != "Running")
         end
 
-
-#        done = false
-#        attempts = 0
-
- #       while attempts < 240 and not done
- #         attempts += 1
-
-  #        promise = client.deployments.get resource_group_name, deployment_name
-  #        result = promise.value!
-  #        state = result.body.properties.provisioning_state
-
-   #       done = (state != "Accepted" and state != "Running")
-
-    #      sleep(10) unless done
-     #   end
-
-        # TODO: handle deployment timeout
         if (state == 'Failed')
           promise = client.deployment_operations.list resource_group_name, deployment_name
           result = promise.value!

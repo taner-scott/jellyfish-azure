@@ -36,6 +36,10 @@ module JellyfishAzure
 
         outputs
 
+      rescue WaitUtil::TimeoutError => e
+        self.status = :terminated
+        self.status_msg = 'The provisioning operation timed out.'
+        save
       rescue AzureDeploymentErrors => e
         self.status = :terminated
         self.status_msg = e.errors.map { |error| error.error_message }.join "\n"
@@ -48,17 +52,11 @@ module JellyfishAzure
         else
           self.status_msg = e.body['error']['message']
         end
-
         save
-
-        puts e.body.to_json
       rescue => e
-        self.status = :available
+        self.status = :terminated
+        self.status_msg "Unexpected error: #{e.message}"
         save
-
-        puts e.message
-        puts e.backtrace.join("\n")
-        raise
       end
 
       def terminate
