@@ -40,7 +40,7 @@ module JellyfishAzure
     initializer 'jellyfish_azure.register_extension', :after => :finisher_hook do ||
       ::Jellyfish::Extension.register 'jellyfish-azure' do
         requires_jellyfish '>= 4.0.0'
-
+  
         load_scripts 'extensions/azure/components/forms/fields.config.js',
           'extensions/azure/resources/azure-data.factory.js'
 

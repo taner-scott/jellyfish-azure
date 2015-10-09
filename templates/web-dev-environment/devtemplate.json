@@ -1,0 +1,211 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "projectName": {
+      "type": "string",
+      "metadata": {
+        "description": "Unique name for the Virtual Machine"
+      }
+    },
+    "serviceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Unique name for the service."
+      }
+    },
+    "dnsNameForPublicIP": {
+      "type": "string",
+      "metadata": {
+        "description": "Unique DNS Name for the Public IP used to access the IIS server."
+      }
+    },
+    "webTechnology": {
+      "type": "string",
+      "allowedValues": [
+        "ASP_NET",
+        "Ruby"
+      ],
+      "metadata": {
+        "description": "This is the web technology that your VM will run."
+      }
+    },
+    "dbTechnology": {
+      "type": "string",
+      "allowedValues": [
+        "SQLServer",
+        "Postgres"
+      ],
+      "metadata": {
+        "description": "This is the database that your VM will run."
+      }
+    },
+    "adminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "Username for Virtual Machine"
+      }
+    },
+    "adminPassword": {
+      "type": "string",
+      "metadata": {
+        "description": "Password for Virtual Machine"
+      }
+    }
+  },
+  "outputs": {
+    "dnsName": {
+      "type": "string",
+      "value": "[reference(variables('publicIPAddressName')).dnsSettings.fqdn]"
+    },
+    "adminUsername": {
+      "type": "string",
+      "value": "[parameters('adminUsername')]"
+    }
+  },
+  "variables": {
+    "location": "West US",
+    "storageAccountName": "[parameters('serviceName')]",
+    "storageAccountType": "Standard_LRS",
+    "publicIPAddressName": "[concat(parameters('serviceName'), '_publicIPAddress')]",
+    "virtualNetworkName": "[concat(parameters('serviceName'), '_vnet')]",
+    "subnetName": "[concat(parameters('serviceName'), '_subnet')]",
+    "addressPrefix": "10.0.0.0/16",
+    "subnetPrefix": "10.0.0.0/24",
+    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
+    "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
+
+    "serverIPPrefix": "10.0.0.",
+    "webServerNicName": "[concat(parameters('serviceName'), '_webServerNic')]",
+    "sqlServerNicName": "[concat(parameters('serviceName'), '_sqlServerNic')]",
+
+    "webServerVmName": "[concat(parameters('serviceName'), '_webServerVm')]",
+    "webServerVmSize": "Basic_A0",
+    "webServerMachineName": "webserver",
+    "webServerImagePublisher": "MicrosoftWindowsServer",
+    "webServerImageOffer": "WindowsServer",
+    "webServerImageSKU": "2012-R2-Datacenter",
+
+    "sqlServerVmName": "[concat(parameters('serviceName'), '_sqlServerVm')]",
+    "sqlServerVmSize": "Basic_A0",
+    "sqlServerMachineName": "sqlserver",
+    "sqlServerImagePublisher": "MicrosoftSQLServer",
+    "sqlServerImageOffer": "SQL2014-WS2012R2",
+    "sqlServerImageSKU": "Standard"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('storageAccountName')]",
+      "apiVersion": "2015-05-01-preview",
+      "location": "[variables('location')]",
+      "tags": {
+        "Project": "[parameters('projectName')]"
+      },
+      "properties": {
+        "accountType": "[variables('storageAccountType')]"
+      }
+    },
+    {
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('virtualNetworkName')]",
+      "location": "[variables('location')]",
+      "tags": {
+        "Project": "[parameters('projectName')]",
+        "Service": "[parameters('serviceName')]",
+        "Web": "[parameters('webTechnology')]",
+        "DB": "[parameters('dbTechnology')]",
+        "DNS": "[parameters('dnsNameForPublicIP')]",
+        "Username": "[parameters('adminUsername')]",
+        "Password": "[parameters('adminPassword')]"
+      },
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('addressPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('subnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('subnetPrefix')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[variables('publicIPAddressName')]",
+      "location": "[variables('location')]",
+      "tags": {
+        "Project": "[parameters('projectName')]"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "[parameters('dnsNameForPublicIP')]"
+        }
+      }
+    },
+    {
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[variables('webServerNicName')]",
+      "location": "[variables('location')]",
+      "tags": {
+        "Project": "[parameters('projectName')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]",
+        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[concat(variables('serverIPPrefix'), '200')]",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]"
+              },
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[variables('sqlServerNicName')]",
+      "location": "[variables('location')]",
+      "tags": {
+        "Project": "[parameters('projectName')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[concat(variables('serverIPPrefix'), '100')]",
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
