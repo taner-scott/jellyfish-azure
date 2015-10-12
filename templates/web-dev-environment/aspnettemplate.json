@@ -2,6 +2,12 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "projectName": {
+      "type": "string",
+      "metadata": {
+        "description": "Unique name for the Virtual Machine"
+      }
+    },
     "serviceName": {
       "type": "string",
       "metadata": {
@@ -17,8 +23,8 @@
     "webTechnology": {
       "type": "string",
       "allowedValues": [
-        "aspnet",
-        "ruby"
+        "ASP_NET",
+        "Ruby"
       ],
       "metadata": {
         "description": "This is the web technology that your VM will run."
@@ -27,8 +33,8 @@
     "dbTechnology": {
       "type": "string",
       "allowedValues": [
-        "mssqlserver",
-        "postgres"
+        "SQLServer",
+        "Postgres"
       ],
       "metadata": {
         "description": "This is the database that your VM will run."
@@ -58,7 +64,7 @@
     }
   },
   "variables": {
-    "templateUrl": "https://raw.githubusercontent.com/taner-scott/jellyfish-azure/master/templates/web-dev-environment/",
+    "location": "West US",
     "storageAccountName": "[parameters('serviceName')]",
     "storageAccountType": "Standard_LRS",
     "publicIPAddressName": "[concat(parameters('serviceName'), '_publicIPAddress')]",
@@ -71,20 +77,31 @@
 
     "serverIPPrefix": "10.0.0.",
     "webServerNicName": "[concat(parameters('serviceName'), '_webServerNic')]",
-    "dbServerNicName": "[concat(parameters('serviceName'), '_dbServerNic')]",
+    "sqlServerNicName": "[concat(parameters('serviceName'), '_sqlServerNic')]",
 
     "webServerVmName": "[concat(parameters('serviceName'), '_webServerVm')]",
-    "webServerTemplateUrl": "[concat(variables('templateUrl'), 'web_', parameters('webTechnology'), '.json')]",
-    "dbServerTemplateUrl": "[concat(variables('templateUrl'), 'db_', parameters('dbTechnology'), '.json')]",
+    "webServerVmSize": "Basic_A0",
+    "webServerMachineName": "webserver",
+    "webServerImagePublisher": "MicrosoftWindowsServer",
+    "webServerImageOffer": "WindowsServer",
+    "webServerImageSKU": "2012-R2-Datacenter",
 
-    "dbServerVmName": "[concat(parameters('serviceName'), '_dbServerVm')]",
+    "sqlServerVmName": "[concat(parameters('serviceName'), '_sqlServerVm')]",
+    "sqlServerVmSize": "Basic_A0",
+    "sqlServerMachineName": "sqlserver",
+    "sqlServerImagePublisher": "MicrosoftSQLServer",
+    "sqlServerImageOffer": "SQL2014-WS2012R2",
+    "sqlServerImageSKU": "Standard"
   },
   "resources": [
     {
       "type": "Microsoft.Storage/storageAccounts",
       "name": "[variables('storageAccountName')]",
       "apiVersion": "2015-05-01-preview",
-      "location": "[resourceGroup().location]",
+      "location": "[variables('location')]",
+      "tags": {
+        "Project": "[parameters('projectName')]"
+      },
       "properties": {
         "accountType": "[variables('storageAccountType')]"
       }
@@ -93,7 +110,16 @@
       "apiVersion": "2015-05-01-preview",
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[variables('virtualNetworkName')]",
-      "location": "[resourceGroup().location]",
+      "location": "[variables('location')]",
+      "tags": {
+        "Project": "[parameters('projectName')]",
+        "Service": "[parameters('serviceName')]",
+        "Web": "[parameters('webTechnology')]",
+        "DB": "[parameters('dbTechnology')]",
+        "DNS": "[parameters('dnsNameForPublicIP')]",
+        "Username": "[parameters('adminUsername')]",
+        "Password": "[parameters('adminPassword')]"
+      },
       "properties": {
         "addressSpace": {
           "addressPrefixes": [
@@ -114,7 +140,10 @@
       "apiVersion": "2015-05-01-preview",
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[variables('publicIPAddressName')]",
-      "location": "[resourceGroup().location]",
+      "location": "[variables('location')]",
+      "tags": {
+        "Project": "[parameters('projectName')]"
+      },
       "properties": {
         "publicIPAllocationMethod": "Dynamic",
         "dnsSettings": {
@@ -126,7 +155,10 @@
       "apiVersion": "2015-05-01-preview",
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[variables('webServerNicName')]",
-      "location": "[resourceGroup().location]",
+      "location": "[variables('location')]",
+      "tags": {
+        "Project": "[parameters('projectName')]"
+      },
       "dependsOn": [
         "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]",
         "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
@@ -152,8 +184,11 @@
     {
       "apiVersion": "2015-05-01-preview",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[variables('dbServerNicName')]",
-      "location": "[resourceGroup().location]",
+      "name": "[variables('sqlServerNicName')]",
+      "location": "[variables('location')]",
+      "tags": {
+        "Project": "[parameters('projectName')]"
+      },
       "dependsOn": [
         "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
       ],
@@ -170,84 +205,6 @@
             }
           }
         ]
-      }
-    },
-    {
-      "apiVersion": "2015-01-01",
-      "name": "webVM",
-      "type": "Microsoft.Resources/deployments",
-      "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
-        "[concat('Microsoft.Network/networkInterfaces/', variables('webServerNicName'))]"
-      ],
-      "properties": {
-        "mode": "incremental",
-        "templateLink": {
-          "uri": "[variables('webServerTemplateUrl')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "templateUrl": {
-            "value": "[variables('templateUrl')]"
-          },
-          "adminUsername": {
-            "value": "[parameters('adminUsername')]"
-          },
-          "adminPassword": {
-            "value": "[parameters('adminPassword')]"
-          },
-          "storageAccountName": {
-            "value": "[variables('storageAccountName')]"
-          },
-          "nicName": {
-            "value": "[variables('webServerNicName')]"
-          },
-          "machineName": {
-            "value": "[variables('webServerMachineName')]"
-          },
-          "vmName": {
-            "value": "[variables('webServerVmName')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2015-01-01",
-      "name": "dbVM",
-      "type": "Microsoft.Resources/deployments",
-      "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
-        "[concat('Microsoft.Network/networkInterfaces/', variables('dbServerNicName'))]"
-      ],
-      "properties": {
-        "mode": "incremental",
-        "templateLink": {
-          "uri": "[variables('dbServerTemplateUrl')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "templateUrl": {
-            "value": "[variables('templateUrl')]"
-          },
-          "adminUsername": {
-            "value": "[parameters('adminUsername')]"
-          },
-          "adminPassword": {
-            "value": "[parameters('adminPassword')]"
-          },
-          "storageAccountName": {
-            "value": "[variables('storageAccountName')]"
-          },
-          "nicName": {
-            "value": "[variables('dbServerNicName')]"
-          },
-          "machineName": {
-            "value": "[variables('dbServerMachineName')]"
-          },
-          "vmName": {
-            "value": "[variables('dbServerVmName')]"
-          }
-        }
       }
     }
   ]

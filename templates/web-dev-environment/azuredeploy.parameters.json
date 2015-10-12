@@ -1,0 +1,24 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "serviceName": {
+      "value": "jellyfish1"
+    },
+    "webTechnology": {
+      "value": "aspnet"
+    },
+    "dbTechnology": {
+      "value": "postgres"
+    },
+    "dnsNameForPublicIP": {
+      "value": "jellyfish1"
+    },
+    "adminUsername": {
+      "value": "jellyfish"
+    },
+    "adminPassword": {
+      "value": "jellyfish"
+    }
+  }
+}
