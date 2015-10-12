@@ -58,8 +58,8 @@
     }
   },
   "variables": {
-    "templateUrl": "https://raw.githubusercontent.com/taner-scott/jellyfish-azure/master/templates/web-dev-environment/",
-    "storageAccountName": "[parameters('serviceName')]",
+    "templateUrl": "https://raw.githubusercontent.com/neudesic/jellyfish-azure/master/templates/web-dev-environment/",
+    "storageAccountName": "[parameters('dnsNameForPublicIP')]",
     "storageAccountType": "Standard_LRS",
     "publicIPAddressName": "[concat(parameters('serviceName'), '_publicIPAddress')]",
     "virtualNetworkName": "[concat(parameters('serviceName'), '_vnet')]",
@@ -70,14 +70,16 @@
     "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
 
     "serverIPPrefix": "10.0.0.",
-    "webServerNicName": "[concat(parameters('serviceName'), '_webServerNic')]",
-    "dbServerNicName": "[concat(parameters('serviceName'), '_dbServerNic')]",
 
     "webServerVmName": "[concat(parameters('serviceName'), '_webServerVm')]",
+    "webServerNicName": "[concat(parameters('serviceName'), '_webServerNic')]",
+    "webServerMachineName": "webserver",
     "webServerTemplateUrl": "[concat(variables('templateUrl'), 'web_', parameters('webTechnology'), '.json')]",
-    "dbServerTemplateUrl": "[concat(variables('templateUrl'), 'db_', parameters('dbTechnology'), '.json')]",
 
     "dbServerVmName": "[concat(parameters('serviceName'), '_dbServerVm')]",
+    "dbServerNicName": "[concat(parameters('serviceName'), '_dbServerNic')]",
+    "dbServerMachineName": "dbserver",
+    "dbServerTemplateUrl": "[concat(variables('templateUrl'), 'db_', parameters('dbTechnology'), '.json')]"
   },
   "resources": [
     {
