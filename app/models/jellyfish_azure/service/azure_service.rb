@@ -12,7 +12,9 @@ module JellyfishAzure
       def resource_group_name
         @_resource_group_name ||= begin
           short_uuid = uuid.tr '-', ''
-          ("jf#{short_uuid}_#{name}")[0...85]
+          safe_name = name.gsub(/[^0-9a-zA-Z_]/i, '')
+
+          ("jf#{short_uuid}_#{safe_name}")[0...85]
         end
       end
 
