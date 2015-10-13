@@ -14,6 +14,11 @@ module JellyfishAzure
       render json: provider.azure_resource_groups
     end
 
+    def web_dev_locations
+      authorize :azure
+      render json: Service::WebDevEnvironment.locations
+    end
+
     private
 
     def provider

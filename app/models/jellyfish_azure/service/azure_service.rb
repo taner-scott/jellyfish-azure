@@ -34,7 +34,9 @@ module JellyfishAzure
         properties.parameters = template_parameters
 
         # TODO: replace this with the template url once it's working well
-        properties.template = JSON.parse(File.read(template_url));
+        # properties.template = JSON.parse(File.read(template_url));
+        properties.template_link = Azure::ARM::Resources::Models::TemplateLink.new()
+        properties.template_link.uri = template_url
 
         params = Azure::ARM::Resources::Models::Deployment.new
         params.properties = properties;

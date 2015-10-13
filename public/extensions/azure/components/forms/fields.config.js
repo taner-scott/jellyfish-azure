@@ -10,8 +10,8 @@
       type: 'select',
       templateOptions: {
         options: [
-          {label: 'ASP.NET', value: 'ASP_NET'},
-          {label: 'Ruby', value: 'Ruby'}
+          {label: 'ASP.NET', value: 'aspnet'},
+          {label: 'Ruby', value: 'ruby'}
         ]
       }
     });
@@ -20,10 +20,21 @@
       type: 'select',
       templateOptions: {
         options: [
-          {label: 'MS Sql Server', value: 'SQLServer'},
-          {label: 'Postgres', value: 'Postgres'}
+          {label: 'MS Sql Server', value: 'mssqlserver'},
+          {label: 'Postgres', value: 'postgres'}
         ]
       }
+    });
+
+    Forms.fields('az_dev_location', {
+      type: 'select',
+      templateOptions: {
+        options: []
+      },
+      data: {
+        action: 'web_dev_locations'
+      },
+      controller: AzureDataController
     });
 
     Forms.fields('azure_storage_name', {

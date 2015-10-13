@@ -9,12 +9,20 @@ module JellyfishAzure
         actions
       end
 
-      def provision
-        ensure_resource_group 'westus'
+      def self.locations
+        [
+          { label: 'US East', value: 'eastus' },
+          { label: 'US West', value: 'westus' }
+        ]
+      end
 
-        template_url = File.expand_path('../../../../../templates/web-dev-environment/smalldeploy.json', __FILE__);
+      def provision
+        location = settings[:az_dev_location];
+        ensure_resource_group location
+
+        # template_url = File.expand_path('../../../../../templates/web-dev-environment/azuredeploy.json', __FILE__);
+        template_url = 'https://raw.githubusercontent.com/neudesic/jellyfish-azure/master/templates/web-dev-environment/azuredeploy.json';
         template_parameters = {
-          projectName: { value: 'jf_' + project.name },
           serviceName: { value: 'jf' + uuid.tr('-','') + '_' + name },
           webTechnology: { value: product.settings[:az_dev_web] },
           dbTechnology: { value: product.settings[:az_dev_db] },
@@ -55,6 +63,8 @@ module JellyfishAzure
         end
         save
       rescue => e
+        puts e.message
+
         self.status = :terminated
         self.status_msg "Unexpected error: #{e.message}"
         save
