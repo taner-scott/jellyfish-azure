@@ -9,13 +9,33 @@ module JellyfishAzure
         end
       end
 
-      def resource_group_name
-        @_resource_group_name ||= begin
-          short_uuid = uuid.tr '-', ''
-          safe_name = name.gsub(/[^0-9a-zA-Z_]/i, '')
-
-          ("jf#{short_uuid}_#{safe_name}")[0...85]
+      def storage_client
+        @_storage_client ||= begin
+          result = Azure::ARM::Storage::StorageManagementClient.new product.provider.credentials
+          result.subscription_id = product.provider.subscription_id
+          result
         end
+      end
+
+      def check_storage_account name
+        parameters = Azure::ARM::Storage::Models::StorageAccountCheckNameAvailabilityParameters.new()
+        parameters.name = name
+        parameters.type = "Microsoft.Storage/storageAccounts"
+
+        promise = storage_client.storage_accounts.check_name_availability parameters
+        result = promise.value!
+        result.body
+      end
+
+      def resource_group_name
+        @_resource_group_name ||= format_resource_name uuid, name
+      end
+
+      def format_resource_name uuid, name
+        safe_uuid = uuid.tr '-', ''
+        safe_name = name.gsub(/[^0-9a-zA-Z_]/i, '')
+
+        "jf#{safe_uuid}_#{safe_name}"
       end
 
       def ensure_resource_group location
