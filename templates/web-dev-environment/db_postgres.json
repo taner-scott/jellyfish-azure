@@ -2,7 +2,7 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "templateUrl": {
+    "templateBaseUrl": {
       "type": "string"
     },
     "adminUsername": {
@@ -11,61 +11,70 @@
     "adminPassword": {
       "type": "securestring"
     },
-    "storageAccountName": {
-      "type": "string"
+    "serverSettings": {
+      "type": "object"
     },
-    "nicName": {
-      "type": "string"
+    "subnetSettings": {
+      "type": "object"
     },
-    "machineName": {
-      "type": "string"
-    },
-    "vmName": {
-      "type": "string"
+    "storageSettings": {
+      "type": "object"
     }
   },
   "variables": {
-    "osVmSize": "Basic_A0",
-    "osImagePublisher": "Canonical",
-    "osImageOffer": "UbuntuServer",
-    "osImageSKU": "14.04.2-LTS",
-    "osVersion": "latest"
+    "vmSize": "Basic_A0",
+    "dataDiskSizeGB": 128,
+    "imageReference": {
+      "publisher": "Canonical",
+      "offer": "UbuntuServer",
+      "sku": "14.04.2-LTS",
+      "version": "latest"
+    }
   },
   "resources": [
     {
       "apiVersion": "2015-05-01-preview",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[parameters('vmName')]",
+      "name": "[parameters('serverSettings').name]",
       "location": "[resourceGroup().location]",
       "properties": {
         "hardwareProfile": {
-          "vmSize": "[variables('osVmSize')]"
+          "vmSize": "[variables('vmSize')]"
         },
         "osProfile": {
-          "computername": "[parameters('machineName')]",
+          "computername": "[parameters('serverSettings').machineName]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
         "storageProfile": {
-          "imageReference": {
-            "publisher": "[variables('osImagePublisher')]",
-            "offer": "[variables('osImageOffer')]",
-            "sku": "[variables('osImageSKU')]",
-            "version": "[variables('osVersion')]"
-          },
+          "imageReference": "[variables('imageReference')]",
           "osDisk": {
             "name": "osdisk",
             "vhd": {
-              "uri": "[concat('http://',parameters('storageAccountName'),'.blob.core.windows.net/vhds/',parameters('vmName'),'.vhd')]"
+              "uri":
+              "[concat('http://',parameters('storageSettings').name,'.blob.core.windows.net/vhds/',parameters('serverSettings').name,'.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
-          }
+          },
+          "dataDisks": [
+            {
+              "name": "datadisk1",
+              "diskSizeGB": "[variables('dataDiskSizeGB')]",
+              "lun": 0,
+              "vhd": {
+                "uri":
+                "[concat('http://',parameters('storageSettings').name,'.blob.core.windows.net/vhds/',parameters('serverSettings').name,'_data.vhd')]"
+              },
+              "caching": "None",
+              "createOption": "Empty"
+            }
+          ]
         },
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('nicName'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('serverSettings').nic.name)]"
             }
           ]
         }

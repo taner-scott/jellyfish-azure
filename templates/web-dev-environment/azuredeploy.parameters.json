@@ -6,19 +6,19 @@
       "value": "jellyfish1"
     },
     "webTechnology": {
-      "value": "aspnet"
+      "value": "ruby"
     },
     "dbTechnology": {
       "value": "postgres"
     },
     "dnsNameForPublicIP": {
-      "value": "jellyfish1"
+      "value": "predeekcjf1"
     },
     "adminUsername": {
       "value": "jellyfish"
     },
     "adminPassword": {
-      "value": "jellyfish"
+      "value": "Jelly@fish1"
     }
   }
 }

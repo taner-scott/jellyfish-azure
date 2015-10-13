@@ -50,7 +50,7 @@
   "outputs": {
     "dnsName": {
       "type": "string",
-      "value": "[reference(variables('publicIPAddressName')).dnsSettings.fqdn]"
+      "value": "[reference(variables('publicIpSettings').name).dnsSettings.fqdn]"
     },
     "adminUsername": {
       "type": "string",
@@ -58,55 +58,72 @@
     }
   },
   "variables": {
-    "templateUrl": "https://raw.githubusercontent.com/neudesic/jellyfish-azure/master/templates/web-dev-environment/",
-    "storageAccountName": "[parameters('dnsNameForPublicIP')]",
-    "storageAccountType": "Standard_LRS",
-    "publicIPAddressName": "[concat(parameters('serviceName'), '_publicIPAddress')]",
-    "virtualNetworkName": "[concat(parameters('serviceName'), '_vnet')]",
-    "subnetName": "[concat(parameters('serviceName'), '_subnet')]",
-    "addressPrefix": "10.0.0.0/16",
-    "subnetPrefix": "10.0.0.0/24",
-    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
-    "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
+    "templateBaseUrl": "https://raw.githubusercontent.com/neudesic/jellyfish-azure/working/templates/web-dev-environment/",
 
-    "serverIPPrefix": "10.0.0.",
-
-    "webServerVmName": "[concat(parameters('serviceName'), '_webServerVm')]",
-    "webServerNicName": "[concat(parameters('serviceName'), '_webServerNic')]",
-    "webServerMachineName": "webserver",
-    "webServerTemplateUrl": "[concat(variables('templateUrl'), 'web_', parameters('webTechnology'), '.json')]",
-
-    "dbServerVmName": "[concat(parameters('serviceName'), '_dbServerVm')]",
-    "dbServerNicName": "[concat(parameters('serviceName'), '_dbServerNic')]",
-    "dbServerMachineName": "dbserver",
-    "dbServerTemplateUrl": "[concat(variables('templateUrl'), 'db_', parameters('dbTechnology'), '.json')]"
+    "publicIpSettings": {
+      "name": "[concat(parameters('serviceName'), '_publicIPAddress')]",
+      "dnsName": "[parameters('dnsNameForPublicIP')]"
+    },
+    "storageSettings": {
+      "name": "[parameters('dnsNameForPublicIP')]",
+      "type": "Standard_LRS"
+    },
+    "networkSettings": {
+      "name": "[concat(parameters('servicename'), '_vnet')]",
+      "addressPrefix": "10.0.0.0/16",
+      "subnet": {
+        "name": "[concat(parameters('servicename'), '_subnet')]",
+        "prefix": "10.0.0.0/24"
+      }
+    },
+    "webServerSettings": {
+      "name": "[concat(parameters('serviceName'), '_webServerVm')]",
+      "templateUrl": "[concat(variables('templateBaseUrl'), 'web_', parameters('webTechnology'), '.json')]",
+      "machineName": "webserver",
+      "nic": {
+        "name": "[concat(parameters('serviceName'), '_webServerNic')]",
+        "publicDnsName": "[parameters('dnsNameForPublicIP')]",
+        "ipAddress": "10.0.0.100"
+      }
+    },
+    "dbServerSettings": {
+      "name": "[concat(parameters('serviceName'), '_dbServerVm')]",
+      "templateUrl": "[concat(variables('templateBaseUrl'), 'db_', parameters('dbTechnology'), '.json')]",
+      "machineName": "dbserver",
+      "nic": {
+        "name": "[concat(parameters('serviceName'), '_dbServerNic')]",
+        "ipAddress": "10.0.0.150"
+      }
+    },
+    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('networkSettings').name)]",
+    "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('networkSettings').subnet.name)]"
   },
   "resources": [
     {
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[variables('storageAccountName')]",
       "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('storageSettings').name]",
       "location": "[resourceGroup().location]",
       "properties": {
-        "accountType": "[variables('storageAccountType')]"
+        "accountType": "[variables('storageSettings').type]"
       }
     },
     {
       "apiVersion": "2015-05-01-preview",
       "type": "Microsoft.Network/virtualNetworks",
-      "name": "[variables('virtualNetworkName')]",
+      "name": "[variables('networkSettings').name]",
       "location": "[resourceGroup().location]",
       "properties": {
         "addressSpace": {
           "addressPrefixes": [
-            "[variables('addressPrefix')]"
+            "[variables('networkSettings').addressPrefix]"
           ]
         },
         "subnets": [
           {
-            "name": "[variables('subnetName')]",
+            "name": "[variables('networkSettings').subnet.name]",
             "properties": {
-              "addressPrefix": "[variables('subnetPrefix')]"
+              "addressPrefix": "[variables('networkSettings').subnet.prefix]"
             }
           }
         ]
@@ -115,23 +132,23 @@
     {
       "apiVersion": "2015-05-01-preview",
       "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[variables('publicIPAddressName')]",
+      "name": "[variables('publicIpSettings').name]",
       "location": "[resourceGroup().location]",
       "properties": {
         "publicIPAllocationMethod": "Dynamic",
         "dnsSettings": {
-          "domainNameLabel": "[parameters('dnsNameForPublicIP')]"
+          "domainNameLabel": "[variables('publicIpSettings').dnsName]"
         }
       }
     },
     {
       "apiVersion": "2015-05-01-preview",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[variables('webServerNicName')]",
+      "name": "[variables('webServerSettings').nic.name]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]",
-        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIpSettings').name)]",
+        "[concat('Microsoft.Network/virtualNetworks/', variables('networkSettings').name)]"
       ],
       "properties": {
         "ipConfigurations": [
@@ -139,9 +156,9 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "[concat(variables('serverIPPrefix'), '200')]",
+              "privateIPAddress": "[variables('webServerSettings').nic.ipAddress]",
               "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]"
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIpSettings').name)]"
               },
               "subnet": {
                 "id": "[variables('subnetRef')]"
@@ -154,10 +171,10 @@
     {
       "apiVersion": "2015-05-01-preview",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[variables('dbServerNicName')]",
+      "name": "[variables('dbServerSettings').nic.name]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+        "[concat('Microsoft.Network/virtualNetworks/', variables('networkSettings').name)]"
       ],
       "properties": {
         "ipConfigurations": [
@@ -165,7 +182,7 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "[concat(variables('serverIPPrefix'), '100')]",
+              "privateIPAddress": "[variables('dbServerSettings').nic.ipAddress]",
               "subnet": {
                 "id": "[variables('subnetRef')]"
               }
@@ -176,21 +193,21 @@
     },
     {
       "apiVersion": "2015-01-01",
-      "name": "webVM",
+      "name": "webServer",
       "type": "Microsoft.Resources/deployments",
       "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
-        "[concat('Microsoft.Network/networkInterfaces/', variables('webServerNicName'))]"
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageSettings').name)]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('webServerSettings').nic.name)]"
       ],
       "properties": {
         "mode": "incremental",
         "templateLink": {
-          "uri": "[variables('webServerTemplateUrl')]",
+          "uri": "[variables('webServerSettings').templateUrl]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "templateUrl": {
-            "value": "[variables('templateUrl')]"
+          "templateBaseUrl": {
+            "value": "[variables('templateBaseUrl')]"
           },
           "adminUsername": {
             "value": "[parameters('adminUsername')]"
@@ -198,38 +215,35 @@
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
           },
-          "storageAccountName": {
-            "value": "[variables('storageAccountName')]"
+          "serverSettings": {
+            "value": "[variables('webServerSettings')]"
           },
-          "nicName": {
-            "value": "[variables('webServerNicName')]"
+          "subnetSettings": {
+            "value": "[variables('networkSettings').subnet]"
           },
-          "machineName": {
-            "value": "[variables('webServerMachineName')]"
-          },
-          "vmName": {
-            "value": "[variables('webServerVmName')]"
+          "storageSettings": {
+            "value": "[variables('storageSettings')]"
           }
         }
       }
     },
     {
       "apiVersion": "2015-01-01",
-      "name": "dbVM",
+      "name": "dbServer",
       "type": "Microsoft.Resources/deployments",
       "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
-        "[concat('Microsoft.Network/networkInterfaces/', variables('dbServerNicName'))]"
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageSettings').name)]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('dbServerSettings').nic.name)]"
       ],
       "properties": {
         "mode": "incremental",
         "templateLink": {
-          "uri": "[variables('dbServerTemplateUrl')]",
+          "uri": "[variables('webServerSettings').templateUrl]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "templateUrl": {
-            "value": "[variables('templateUrl')]"
+          "templateBaseUrl": {
+            "value": "[variables('templateBaseUrl')]"
           },
           "adminUsername": {
             "value": "[parameters('adminUsername')]"
@@ -237,17 +251,14 @@
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
           },
-          "storageAccountName": {
-            "value": "[variables('storageAccountName')]"
+          "serverSettings": {
+            "value": "[variables('webServerSettings')]"
           },
-          "nicName": {
-            "value": "[variables('dbServerNicName')]"
+          "subnetSettings": {
+            "value": "[variables('networkSettings').subnet]"
           },
-          "machineName": {
-            "value": "[variables('dbServerMachineName')]"
-          },
-          "vmName": {
-            "value": "[variables('dbServerVmName')]"
+          "storageSettings": {
+            "value": "[variables('storageSettings')]"
           }
         }
       }
