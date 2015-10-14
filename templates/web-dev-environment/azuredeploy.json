@@ -48,7 +48,7 @@
     },
     "templateBaseUrl": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/neudesic/jellyfish-azure/master/templates/web-dev-environment",
+      "defaultValue": "https://raw.githubusercontent.com/neudesic/jellyfish-azure/master/templates/web-dev-environment/",
       "metadata": {
         "description": "Password for Virtual Machine"
       }
@@ -221,7 +221,7 @@
             "value": "[parameters('adminPassword')]"
           },
           "dbIpAddress": {
-            "value": "[variable('dbServerSettings').nic.ipAddress]"
+            "value": "[variables('dbServerSettings').nic.ipAddress]"
           },
           "serverSettings": {
             "value": "[variables('webServerSettings')]"
