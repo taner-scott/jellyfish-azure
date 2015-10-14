@@ -24,12 +24,20 @@
   "variables": {
     "vmSize": "Basic_A0",
     "dataDiskSizeGB": 128,
+    "osDiskUri": "[concat('http://',parameters('storageSettings').name,'.blob.core.windows.net/vhds/',parameters('serverSettings').name,'.vhd')]",
+    "dataDisk1Uri":
+    "[concat('http://',parameters('storageSettings').name,'.blob.core.windows.net/vhds/',parameters('serverSettings').name,'_disk1.vhd')]",
     "imageReference": {
       "publisher": "Canonical",
       "offer": "UbuntuServer",
       "sku": "14.04.2-LTS",
       "version": "latest"
-    }
+    },
+    "scripts": [
+      "[concat(parameters('templateBaseUrl'), 'db_postgres/install_postgresql.sh')]",
+      "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/shared_scripts/ubuntu/vm-disk-utils-0.1.sh"
+    ],
+    "scriptCommand": "[concat('bash install_postgresql.sh -m 0 -s ', parameters('subnetSettings').prefix, ' -t MASTER -p ', parameters('adminPassword'))]"
   },
   "resources": [
     {
@@ -51,8 +59,7 @@
           "osDisk": {
             "name": "osdisk",
             "vhd": {
-              "uri":
-              "[concat('http://',parameters('storageSettings').name,'.blob.core.windows.net/vhds/',parameters('serverSettings').name,'.vhd')]"
+              "uri": "[variables('osDiskUri')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -63,8 +70,7 @@
               "diskSizeGB": "[variables('dataDiskSizeGB')]",
               "lun": 0,
               "vhd": {
-                "uri":
-                "[concat('http://',parameters('storageSettings').name,'.blob.core.windows.net/vhds/',parameters('serverSettings').name,'_data.vhd')]"
+                "uri": "[variables('dataDisk1Uri')]"
               },
               "caching": "None",
               "createOption": "Empty"
@@ -77,6 +83,24 @@
               "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('serverSettings').nic.name)]"
             }
           ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('serverSettings').name, '/install_postgresql')]",
+      "apiVersion": "2015-05-01-preview",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('serverSettings').name)]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.2",
+        "settings": {
+          "fileUris": "[variables('scripts')]",
+          "commandToExecute": "[variables('scriptCommand')]"
         }
       }
     }

@@ -238,7 +238,7 @@
       "properties": {
         "mode": "incremental",
         "templateLink": {
-          "uri": "[variables('webServerSettings').templateUrl]",
+          "uri": "[variables('dbServerSettings').templateUrl]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -252,7 +252,7 @@
             "value": "[parameters('adminPassword')]"
           },
           "serverSettings": {
-            "value": "[variables('webServerSettings')]"
+            "value": "[variables('dbServerSettings')]"
           },
           "subnetSettings": {
             "value": "[variables('networkSettings').subnet]"
