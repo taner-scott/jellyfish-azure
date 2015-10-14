@@ -11,6 +11,9 @@
     "adminPassword": {
       "type": "securestring"
     },
+    "dbIpAddress": {
+      "type": "string"
+    },
     "storageAccountName": {
       "type": "string"
     },

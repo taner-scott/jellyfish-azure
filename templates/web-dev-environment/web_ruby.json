@@ -11,6 +11,9 @@
     "adminPassword": {
       "type": "securestring"
     },
+    "dbIpAddress": {
+      "type": "string"
+    },
     "serverSettings": {
       "type": "object"
     },
@@ -28,7 +31,12 @@
       "offer": "UbuntuServer",
       "sku": "14.04.2-LTS",
       "version": "latest"
-    }
+    },
+    "scripts": [
+      "[concat(parameters('templateBaseUrl'), 'web_ruby/add_host_entry.sh')]",
+      "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/shared_scripts/ubuntu/vm-disk-utils-0.1.sh"
+    ],
+    "scriptCommand": "[concat('bash add_host_entry.sh dbserver ', parameters('dbIpAddress'))]"
   },
   "resources": [
     {
@@ -63,6 +71,24 @@
               "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('serverSettings').nic.name)]"
             }
           ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('serverSettings').name, '/add_host')]",
+      "apiVersion": "2015-05-01-preview",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('serverSettings').name)]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.2",
+        "settings": {
+          "fileUris": "[variables('scripts')]",
+          "commandToExecute": "[variables('scriptCommand')]"
         }
       }
     }
