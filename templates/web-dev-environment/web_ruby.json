@@ -25,7 +25,7 @@
     }
   },
   "variables": {
-    "vmSize": "Basic_A0",
+    "vmSize": "Basic_A2",
     "imageReference": {
       "publisher": "Canonical",
       "offer": "UbuntuServer",
@@ -34,9 +34,10 @@
     },
     "scripts": [
       "[concat(parameters('templateBaseUrl'), 'web_ruby/add_host_entry.sh')]",
-      "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/shared_scripts/ubuntu/vm-disk-utils-0.1.sh"
+      "[concat(parameters('templateBaseUrl'), 'web_ruby/install_dependencies.sh')]",
+      "[concat(parameters('templateBaseUrl'), 'web_ruby/install_ruby.sh')]"
     ],
-    "scriptCommand": "[concat('bash add_host_entry.sh dbserver ', parameters('dbIpAddress'))]"
+    "scriptCommand": "[concat('bash install_dependencies.sh dbserver ', parameters('dbIpAddress'))]"
   },
   "resources": [
     {
