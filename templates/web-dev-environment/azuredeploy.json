@@ -45,6 +45,13 @@
       "metadata": {
         "description": "Password for Virtual Machine"
       }
+    },
+    "templateBaseUrl": {
+      "type": "string",
+      "defaultValue": "https://raw.githubusercontent.com/neudesic/jellyfish-azure/master/templates/web-dev-environment",
+      "metadata": {
+        "description": "Password for Virtual Machine"
+      }
     }
   },
   "outputs": {
@@ -58,8 +65,6 @@
     }
   },
   "variables": {
-    "templateBaseUrl": "https://raw.githubusercontent.com/neudesic/jellyfish-azure/working/templates/web-dev-environment/",
-
     "publicIpSettings": {
       "name": "[concat(parameters('serviceName'), '_publicIPAddress')]",
       "dnsName": "[parameters('dnsNameForPublicIP')]"
@@ -78,7 +83,7 @@
     },
     "webServerSettings": {
       "name": "[concat(parameters('serviceName'), '_webServerVm')]",
-      "templateUrl": "[concat(variables('templateBaseUrl'), 'web_', parameters('webTechnology'), '.json')]",
+      "templateUrl": "[concat(parameters('templateBaseUrl'), 'web_', parameters('webTechnology'), '.json')]",
       "machineName": "webserver",
       "nic": {
         "name": "[concat(parameters('serviceName'), '_webServerNic')]",
@@ -88,7 +93,7 @@
     },
     "dbServerSettings": {
       "name": "[concat(parameters('serviceName'), '_dbServerVm')]",
-      "templateUrl": "[concat(variables('templateBaseUrl'), 'db_', parameters('dbTechnology'), '.json')]",
+      "templateUrl": "[concat(parameters('templateBaseUrl'), 'db_', parameters('dbTechnology'), '.json')]",
       "machineName": "dbserver",
       "nic": {
         "name": "[concat(parameters('serviceName'), '_dbServerNic')]",
@@ -207,7 +212,7 @@
         },
         "parameters": {
           "templateBaseUrl": {
-            "value": "[variables('templateBaseUrl')]"
+            "value": "[parameters('templateBaseUrl')]"
           },
           "adminUsername": {
             "value": "[parameters('adminUsername')]"
@@ -243,7 +248,7 @@
         },
         "parameters": {
           "templateBaseUrl": {
-            "value": "[variables('templateBaseUrl')]"
+            "value": "[parameters('templateBaseUrl')]"
           },
           "adminUsername": {
             "value": "[parameters('adminUsername')]"
