@@ -5,7 +5,7 @@ module JellyfishAzure
 
     def web_dev_locations
       authorize :azure
-      render json: Service::WebDevEnvironment.locations
+      render json: ::JellyfishAzure::Service::WebDevEnvironment.locations
     end
 
     private
