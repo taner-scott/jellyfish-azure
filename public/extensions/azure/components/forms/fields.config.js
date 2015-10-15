@@ -10,7 +10,7 @@
       type: 'select',
       templateOptions: {
         options: [
-          {label: 'ASP.NET', value: 'aspnet'},
+          {label: 'NodeJS', value: 'nodejs'},
           {label: 'Ruby', value: 'ruby'}
         ]
       }
@@ -20,7 +20,6 @@
       type: 'select',
       templateOptions: {
         options: [
-          {label: 'MS Sql Server', value: 'mssqlserver'},
           {label: 'Postgres', value: 'postgres'}
         ]
       }
