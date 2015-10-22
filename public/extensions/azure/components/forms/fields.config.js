@@ -25,6 +25,16 @@
       }
     });
 
+    Forms.fields('az_custom_location', {
+      type: 'select',
+      templateOptions: {
+        options: []
+      },
+      data: {
+        action: 'web_dev_locations'
+      },
+      controller: AzureDataController
+    });
     Forms.fields('az_dev_location', {
       type: 'select',
       templateOptions: {

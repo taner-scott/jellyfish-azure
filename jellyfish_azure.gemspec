@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'rails', '~> 4.2'
   s.add_dependency 'bcrypt', '~> 3.1'
   s.add_dependency 'waitutil', '~> 0.2.1'
+  s.add_dependency 'azure', '~> 0.7.1'
   s.add_dependency 'azure_mgmt_storage', '~> 0.1.1'
   s.add_dependency 'azure_mgmt_resources', '~> 0.1.1'
 
