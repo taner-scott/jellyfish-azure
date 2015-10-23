@@ -1,21 +1,20 @@
 module JellyfishAzure
   module ProductType
-    class CustomPrivateTemplate < ::ProductType
+    class CustomPublicTemplate < ::ProductType
       def self.load_product_types
         return unless super
 
         transaction do
           [
-            set('Custom template from private Blob Storage', '184480e8-7a51-4144-a0e6-a8564cfca752', provider_type: 'JellyfishAzure::Provider::Azure')
+            set('Custom template from the Internet', 'c03e94a2-940e-4d75-ae99-6bd6f7a4d958', provider_type: 'JellyfishAzure::Provider::Azure')
           ].each do |s|
-            create! s.merge!(type: 'JellyfishAzure::ProductType::CustomPrivateTemplate')
+            create! s.merge!(type: 'JellyfishAzure::ProductType::CustomPublicTemplate')
           end
         end
       end
 
       def description
-        'Uses an existing Azure Resource Manager Deployment template from either a public location or private Azure
-blob storage'
+        'Uses an existing Azure Resource Manager Deployment template from a public location'
       end
 
       def tags
@@ -24,10 +23,7 @@ blob storage'
 
       def product_questions
         [
-          { label: 'Storage Account Name', name: :az_custom_name, value_type: :string, field: :text, required: true },
-          { label: 'Storage Account Key', name: :az_custom_key, value_type: :string, field: :password, required: true },
-          { label: 'Storage Account Container', name: :az_custom_container, value_type: :string, field: :text, required: true },
-          { label: 'Storage Account Blob', name: :az_custom_blob, value_type: :string, field: :text, required: true }
+          { label: 'Template URI', name: :az_custom_template_uri, value_type: :string, field: :text, required: true }
         ]
       end
 
@@ -41,7 +37,7 @@ blob storage'
       end
 
       def service_class
-        'JellyfishAzure::Service::CustomPrivateTemplate'.constantize
+        'JellyfishAzure::Service::CustomPublicTemplate'.constantize
       end
     end
   end
