@@ -1,4 +1,5 @@
 require 'azure'
+require 'open-uri'
 
 module JellyfishAzure
   module Service
@@ -15,18 +16,22 @@ module JellyfishAzure
         location = settings[:az_custom_location]
         template_uri = product.settings[:az_custom_template_uri]
 
-        Delayed::Worker.logger.error "Parameters"
-        Delayed::Worker.logger.error "location: #{location}"
-        Delayed::Worker.logger.error "template_uri: #{template_uri}"
+        Delayed::Worker.logger.debug "Parameters"
+        Delayed::Worker.logger.debug "location: #{location}"
+        Delayed::Worker.logger.debug "template_uri: #{template_uri}"
 
-        # TODO: make this generic
+        templateContent = open(template_uri).read
+        template = DeploymentTemplate.new templateContent
+
         template_parameters = {
           templateBaseUrl: { value: URI::join(template_uri, ".").to_s },
-          serviceName: { value: format_resource_name(uuid, name) },
-          dnsNameForPublicIP: { value: settings[:az_custom_param_dnsNameForPublicIP] },
-          adminUsername: { value: settings[:az_custom_param_adminUsername] },
-          adminPassword: { value: settings[:az_custom_param_adminPassword] }
+          serviceName: { value: format_resource_name(uuid, name) }
         }
+
+        template.parameters.each do |parameter|
+          value = settings["az_custom_param_#{parameter.name}".to_sym]
+          template_parameters[parameter.name] = { value: value } unless not value
+        end
 
         # TODO: move the rest of the method to base class?
         ensure_resource_group location
