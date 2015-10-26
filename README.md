@@ -114,20 +114,57 @@ ID to the values collected during the setup process.  The **Save** button will c
 
 ![Create Azure Provider](docs/CreateAzureProvider.png)
 
-TODO: navigate to providers
-
-TODO: create new provider and choose Azure provider
-
-TODO: enter values
-
-
-
 ## Creating a new public template product
+
+TODO: add when questions capability is integreted
 
 ## Creating a new private template product
 
-### uploading to private storage
+The Azure Jellyfish provider has the ability to use templates in private Azure blob storage, but it does require a few
+changes to the way the templates are provided and structured.  The first is that the entire deployment package needs to
+be uploaded to the same Azure storage account container. The second is if child templates or provisioning scripts are
+used, the templates must be made aware they are in private storage.
 
-### creating the new product
+### Uploading to private storage
 
+If the templates aren't already in blob storage, the following scripts will help you create a new Storage Account and
+get the template files into blob storage. The steps to perform are:
+- Ensure a resource group exists to hold the Storage Account
+- Create the storage account
+- Create a container in the storage account
+- Upload the template to the container
 
+The first step will be to make sure the storage account exists and you have the access key for the later steps.
+
+```
+# create a new resource group in your chosen region
+$ azure group create $GROUP_NAME westus
+
+# create a new storage account in the new (or existing) resource group
+$ azure storage account create $STORAGE_ACCOUNT_NAME --type LRS -g $GROUP_NAME -l westus
+
+# request the keys for the new storage account
+$ azure storage account keys list $STORAGE_ACCOUNT_NAME -g $GROUP_NAME
+
+info:    Executing command storage account keys list
++ Getting storage account keys                                                 
+data:    Primary: ... 
+data:    Secondary: ...
+info:    storage account keys list command OK
+```
+
+Write down the Storage Account's primary access key for later use and then create the container that will be used to store the files.
+
+```
+# create a container in the storage account
+$ azure storage container create $CONAINER_NAME -a $STORAGE_ACCOUNT_NAME -k $PRIMARY_ACCESS_KEY
+
+# upload a file to the storage account container
+# uploads the azuredeploy.json file the local directory to the test-template/azuredeploy.json location in the template
+# run this line once for each file that is part of the template
+$ azure storage blob upload azuredeploy.json $CONTAINER_NAME test-template/azuredeploy.json -a $STORAGE_ACCOUNT_NAME -k $PRIMARY_ACCESS_KEY
+```
+
+### Create a Private Template product
+
+TODO: add when questions capability is integreted
