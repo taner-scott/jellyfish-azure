@@ -84,7 +84,8 @@ module JellyfishAzure
 
           raise AzureDeploymentErrors.new(result.body)
         else
-          Hash[result.body.properties.outputs.map { |key, value| [ key, value['value'] ] }]
+          outputs = result.body.properties.outputs || {}
+          Hash[outputs.map { |key, value| [ key, value['value'] ] }]
         end
       end
     end
