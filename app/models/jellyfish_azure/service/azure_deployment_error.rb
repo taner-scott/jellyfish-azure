@@ -1,6 +1,5 @@
 module JellyfishAzure
   module Service
-
     class AzureDeploymentError
       # @return [Azure::ARM::Resources::Models::TargetResource] Gets or sets the target resource.
       attr_accessor :target_resource
