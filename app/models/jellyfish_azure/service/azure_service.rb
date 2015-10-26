@@ -1,6 +1,6 @@
 module JellyfishAzure
   module Service
-    class AzureService < ::Service::Storage
+    class AzureService < ::Service
       def client
         @_client ||= begin
           result = Azure::ARM::Resources::ResourceManagementClient.new product.provider.credentials

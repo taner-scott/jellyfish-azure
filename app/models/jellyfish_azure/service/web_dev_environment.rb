@@ -20,7 +20,7 @@ module JellyfishAzure
         dns_name = settings[:az_dev_dns]
 
         storage_account_check = check_storage_account dns_name
-        if not storage_account_check.name_available then
+        unless storage_account_check.name_available then
           self.status = :terminated
           self.status_msg = storage_account_check.message
           save
@@ -32,8 +32,7 @@ module JellyfishAzure
         location = settings[:az_dev_location];
         ensure_resource_group location
 
-        # template_url = File.expand_path('../../../../../templates/web-dev-environment/azuredeploy.json', __FILE__);
-        template_url = 'https://raw.githubusercontent.com/neudesic/jellyfish-azure/master/templates/web-dev-environment/azuredeploy.json';
+        template_url = 'https://raw.githubusercontent.com/projectjellyfish/jellyfish-azure/master/templates/web-dev-environment/azuredeploy.json';
         template_parameters = {
           serviceName: { value: format_resource_name(uuid, name) },
           webTechnology: { value: product.settings[:az_dev_web] },

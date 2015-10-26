@@ -40,17 +40,6 @@
       type: 'text',
       templateOptions: {
         label: 'Name'
-      },
-      validators: {
-        available: {
-          expression: function (viewModel, modelValue, scope) {
-            debugger;
-            return false;
-          },
-          message: function () {
-            return "not available";
-          }
-        }
       }
     });
 
