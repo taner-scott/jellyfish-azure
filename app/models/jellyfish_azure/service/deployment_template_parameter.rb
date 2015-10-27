@@ -1,7 +1,7 @@
 module JellyfishAzure
   module Service
     class DeploymentTemplateParameter
-      @field_hash = {
+      FIELD_HASH = {
         'string' => 'text',
         'securestring' => 'password',
         'int' => 'integer'
@@ -18,7 +18,7 @@ module JellyfishAzure
         if !@allowed_value.nil?
           @field = 'choice'
         else
-          @field = @field_hash[@type.downcase]
+          @field = FIELD_HASH[@type.downcase]
         end
 
         @required = @default_value.nil?

@@ -1,14 +1,6 @@
 module JellyfishAzure
   module Service
     class WebDevEnvironment < AzureService
-      def actions
-        actions = super.merge :terminate
-
-        # determine if action is available
-
-        actions
-      end
-
       def self.locations
         [
           { label: 'US East', value: 'eastus' },
@@ -16,72 +8,51 @@ module JellyfishAzure
         ]
       end
 
-      def provision
-        dns_name = settings[:az_dev_dns]
+      def service_initialize
+        storage_account_check = check_storage_account settings[:az_dev_dns]
 
-        storage_account_check = check_storage_account dns_name
-        unless storage_account_check.name_available then
-          self.status = :terminated
-          self.status_msg = storage_account_check.message
-          save
-
-          return
+        unless storage_account_check.name_available
+          fail ValidationError, storage_account_check.message
         end
+      end
 
+      def template_url
+        'https://raw.githubusercontent.com/projectjellyfish/jellyfish-azure/master/templates/web-dev-environment/azuredeploy.json'
+      end
 
-        location = settings[:az_dev_location];
-        ensure_resource_group location
+      def location
+        settings[:az_dev_location]
+      end
 
-        template_url = 'https://raw.githubusercontent.com/projectjellyfish/jellyfish-azure/master/templates/web-dev-environment/azuredeploy.json';
-        template_parameters = {
-          serviceName: { value: format_resource_name(uuid, name) },
+      def template_parameters
+        {
+          serviceName: { value: resource_group_name },
           webTechnology: { value: product.settings[:az_dev_web] },
           dbTechnology: { value: product.settings[:az_dev_db] },
           dnsNameForPublicIP: { value: settings[:az_dev_dns] },
           adminUsername: { value: settings[:az_username] },
           adminPassword: { value: settings[:az_password] }
         }
-
-        deploy_template 'Deployment', template_url, template_parameters
-        self.status = :provisioning
-        save
-
-        outputs = monitor_deployment 'Deployment'
-
-        # TODO: handle writing status message and outputs to service
-        self.status = :available
-        outputs.each { |key, output| self.service_outputs.create(name: key, value: output, value_type: :string) }
-        self.status_msg = "Deployment successful"
-        save
-
-        outputs
-
-      rescue WaitUtil::TimeoutError => e
-        self.status = :terminated
-        self.status_msg = 'The provisioning operation timed out.'
-        save
-      rescue AzureDeploymentErrors => e
-        self.status = :terminated
-        self.status_msg = e.errors.map { |error| error.error_message }.join "\n"
-        save
-      rescue MsRestAzure::AzureOperationError => e
-        self.status = :terminated
-
-        if e.body.nil?
-          self.status_msg = e.message
-        else
-          self.status_msg = e.body['error']['message']
-        end
-        save
-      rescue => e
-        puts e.message
-
-        self.status = :terminated
-        self.status_msg "Unexpected error: #{e.message}"
-        save
       end
 
-      def terminate
+      private
+
+      def storage_client
+        @_storage_client ||= begin
+          result = Azure::ARM::Storage::StorageManagementClient.new product.provider.credentials
+          result.subscription_id = product.provider.subscription_id
+          result
+        end
+      end
+
+      def check_storage_account(name)
+        parameters = Azure::ARM::Storage::Models::StorageAccountCheckNameAvailabilityParameters.new
+        parameters.name = name
+        parameters.type = 'Microsoft.Storage/storageAccounts'
+
+        promise = storage_client.storage_accounts.check_name_availability parameters
+        result = promise.value!
+        result.body
       end
     end
   end
