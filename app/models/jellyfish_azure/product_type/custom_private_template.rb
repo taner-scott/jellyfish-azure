@@ -31,17 +31,8 @@ blob storage'
         ]
       end
 
-      def order_questions
-        [
-          { label: 'Location', name: :az_custom_location, value_type: :string, field: :az_custom_location, required: true },
-          { label: 'dnsNameForPublicIP', name: 'az_custom_param_dnsNameForPublicIP', value_type: :string, field: :text, required: true },
-          { label: 'adminUsername', name: 'az_custom_param_adminUsername', value_type: :string, field: :text, required: true },
-          { label: 'adminPassword', name: 'az_custom_param_adminPassword', value_type: :string, field: :password, required: true }
-        ]
-      end
-
-      def service_class
-        'JellyfishAzure::Service::CustomPrivateTemplate'.constantize
+      def product_class
+        'JellyfishAzure::Product::CustomPrivateTemplate'.constantize
       end
     end
   end

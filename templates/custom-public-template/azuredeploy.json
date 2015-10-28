@@ -11,6 +11,12 @@
         "description": "Unique name for the service."
       }
     },
+    "external": {
+      "type": "bool",
+      "metadata": {
+        "description": "Flag indicating whether this is an internal or external asset."
+      }
+    },
     "dnsNameForPublicIP": {
       "type": "string",
       "metadata": {

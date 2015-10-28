@@ -19,6 +19,20 @@ module JellyfishAzure
 
         result
       end
+
+      def get_questions(prefix, exclude_list)
+          parameters
+            .reject { |parameter| exclude_list.include? parameter.name }
+            .map do |parameter|
+              {
+                label: parameter.name,
+                name: prefix + parameter.name,
+                value_type: parameter.type,
+                field: parameter.field,
+                required: parameter.type
+              }
+            end
+      end
     end
   end
 end
