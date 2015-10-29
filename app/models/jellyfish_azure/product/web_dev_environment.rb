@@ -16,4 +16,3 @@ module JellyfishAzure
     end
   end
 end
-

@@ -89,7 +89,7 @@ module JellyfishAzure
       end
 
       def handle_azure_error(error)
-        message = e.body.nil ? error.message : e.body['error']['message']
+        message = error.body.nil? ? error.message : error.body['error']['message']
         handle_error message
       end
 

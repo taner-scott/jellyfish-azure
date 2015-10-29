@@ -2,7 +2,25 @@
   'use strict';
 
   angular.module('app.resources')
-    .factory('AzureData', AzureDataFactory);
+    .factory('AzureData', AzureDataFactory)
+    .factory('AzureProductFieldData', AzureProductFieldData);
+
+  /** @ngInject */
+  function AzureProductFieldData($resource) {
+	  var base = '/api/v1/azure/products/:id/:action/:field';
+	  var resource = $resource(base, {action: '@action', id: '@id', parameter: '@parameter' });
+
+	  resource.values = function (id, parameter) {
+		  return resource.query({id: id, action: 'values', field: parameter}).$promise
+		  	.then(function (results) {
+          return $.map(results, function (result) {
+            return { label: result, value: result	};
+          });
+        });
+	  };
+
+	  return resource;
+  }
 
   /** @ngInject */
   function AzureDataFactory($resource) {

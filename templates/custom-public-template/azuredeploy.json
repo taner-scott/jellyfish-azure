@@ -17,6 +17,13 @@
         "description": "Flag indicating whether this is an internal or external asset."
       }
     },
+    "type": {
+      "type": "string",
+	  "allowedValues": [ "one", "two", "three" ],
+      "metadata": {
+        "description": "Parameter containing list of allowed values."
+      }
+    },
     "dnsNameForPublicIP": {
       "type": "string",
       "metadata": {
