@@ -1,8 +1,8 @@
 JellyfishAzure::Engine.routes.draw do
-  resources :providers, only: [] do
+  resources :products, only: [] do
     member do
-      get :web_dev_locations
+      get :locations
+      get 'values/:parameter', to: 'products#parameter_values'
     end
   end
-  get '/products/:id/values/:parameter', to: 'products#parameter_values'
 end

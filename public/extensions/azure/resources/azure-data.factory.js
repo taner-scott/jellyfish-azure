@@ -2,7 +2,7 @@
   'use strict';
 
   angular.module('app.resources')
-    .factory('AzureData', AzureDataFactory)
+    .factory('AzureProductData', AzureProductData)
     .factory('AzureProductFieldData', AzureProductFieldData);
 
   /** @ngInject */
@@ -23,26 +23,14 @@
   }
 
   /** @ngInject */
-  function AzureDataFactory($resource) {
-    var base = '/api/v1/azure/providers/:id/:action';
-    var AzureData = $resource(base, {action: '@action', id: '@id'});
+  function AzureProductData($resource) {
+	  var base = '/api/v1/azure/products/:id/:action';
+	  var resource = $resource(base, {action: '@action', id: '@id' });
 
-    AzureData.web_dev_locations = webDevLocations;
-    AzureData.azure_locations = azureLocations;
-    AzureData.azure_resource_groups = azureResourceGroups;
+	  resource.locations = function (id) {
+		  return resource.query({id: id, action: 'locations'}).$promise;
+	  };
 
-    return AzureData;
-
-    function webDevLocations(id) {
-      return AzureData.query({id: id, action: 'web_dev_locations'}).$promise;
-    }
-
-    function azureLocations(id) {
-      return AzureData.query({id: id, action: 'azure_locations'}).$promise;
-    }
-
-    function azureResourceGroups(id) {
-      return AzureData.query({id: id, action: 'azure_resource_groups'}).$promise;
-    }
+	  return resource;
   }
 })();

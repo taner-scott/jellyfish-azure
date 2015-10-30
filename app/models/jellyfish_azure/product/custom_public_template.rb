@@ -2,7 +2,7 @@ require 'open-uri'
 
 module JellyfishAzure
   module Product
-    class CustomPublicTemplate < ::Product
+    class CustomPublicTemplate < JellyfishAzure::Product::AzureProduct
       EXCLUDE_PARAMS = %w(templateBaseUrl serviceName)
 
       def parameter_values(parameter_name)
@@ -21,7 +21,7 @@ module JellyfishAzure
           @template = JellyfishAzure::Service::DeploymentTemplate.new template_content
 
           default_questions = [
-            { label: 'Location', name: :az_custom_location, value_type: :string, field: :az_custom_location, required: true }
+            { label: 'Location', name: :az_custom_location, value_type: :string, field: :az_location, required: true }
           ]
 
           template_questions = @template.get_questions 'az_custom_param_', EXCLUDE_PARAMS

@@ -2,7 +2,7 @@ require 'azure'
 
 module JellyfishAzure
   module Product
-    class CustomPrivateTemplate < ::Product
+    class CustomPrivateTemplate < JellyfishAzure::Product::AzureProduct
       EXCLUDE_PARAMS = %w(templateBaseUrl sasToken serviceName)
 
       def parameter_values(parameter_name)
@@ -35,7 +35,7 @@ module JellyfishAzure
           @template = JellyfishAzure::Service::DeploymentTemplate.new content
 
           default_questions = [
-            { label: 'Location', name: :az_custom_location, value_type: :string, field: :az_custom_location, required: true }
+            { label: 'Location', name: :az_custom_location, value_type: :string, field: :az_location, required: true }
           ]
 
           template_questions = @template.get_questions 'az_custom_param_', EXCLUDE_PARAMS

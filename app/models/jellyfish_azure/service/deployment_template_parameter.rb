@@ -5,14 +5,20 @@ module JellyfishAzure
         'string' => :string,
         'securestring' => :string,
         'int' => :integer,
-        'bool' => :boolean
+        'bool' => :boolean,
+        'object' => :json,
+        'secureobject' => :json,
+        'array' => :json
       }
 
       FIELD_HASH = {
         'string' => :text,
         'securestring' => :password,
         'int' => :az_integer,
-        'bool' => :checkbox
+        'bool' => :checkbox,
+        'object' => :textarea,
+        'secureobject' => :textarea,
+        'array' => :textarea
       }
 
       attr_reader :name, :type, :default_value, :allowed_value, :field, :required
