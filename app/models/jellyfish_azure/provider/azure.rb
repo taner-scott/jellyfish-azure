@@ -3,27 +3,19 @@ require 'azure_mgmt_resources'
 module JellyfishAzure
   module Provider
     class Azure < ::Provider
-      def azure_locations
-        [
-          { label: 'US East', value: 'eastus' },
-          { label: 'US West', value: 'westus' }
-        ]
-      end
+      validate :validate_azure_connection
 
-      def azure_resource_groups
+      def validate_azure_connection
+        logger.debug "Validating provider settings for '#{name}'"
+
+        # test the connection by listing a single provider
         client = ::Azure::ARM::Resources::ResourceManagementClient.new(credentials)
-        client.subscription_id = subscriptionId
+        client.subscription_id = subscription_id
+        client.providers.list(1).value!
 
-        promise = client.resource_groups.list
-        result = promise.value!
-
-        result.body.value.map do |resourceGroup|
-          {
-            label: resourceGroup.name,
-            value: resourceGroup.name,
-            group: resourceGroup.location
-          }
-        end
+      rescue MsRestAzure::AzureOperationError => e
+        logger.debug e.message
+        errors.add :client_id, e.message
       end
 
       def credentials
