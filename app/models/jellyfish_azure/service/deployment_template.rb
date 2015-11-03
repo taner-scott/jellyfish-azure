@@ -6,7 +6,8 @@ module JellyfishAzure
       end
 
       def parameters
-        @_parameters ||= @_data_hash['parameters'].map { |key, value| DeploymentTemplateParameter.new(key, value) }
+        params = @_data_hash['parameters'] || {}
+        @_parameters ||= params.map { |key, value| DeploymentTemplateParameter.new(key, value) }
       end
 
       def find_allowed_values(parameter_name)
