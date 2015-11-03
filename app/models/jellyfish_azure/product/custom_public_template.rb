@@ -13,7 +13,7 @@ module JellyfishAzure
         template_content = open(template_url).read
 
         # parse the template
-        JellyfishAzure::Service::DeploymentTemplate.new template_content
+        JellyfishAzure::Cloud::DeploymentTemplate.new template_content
       rescue OpenURI::HTTPError => e
         logger.debug e.message
 
@@ -28,7 +28,7 @@ module JellyfishAzure
         # TODO: figure out a way to avoid downloading the template over and over
         template_url = settings[:az_custom_template_uri]
         template_content = open(template_url).read
-        @template = JellyfishAzure::Service::DeploymentTemplate.new template_content
+        @template = JellyfishAzure::Cloud::DeploymentTemplate.new template_content
 
         @template.find_allowed_values parameter_name
       end
@@ -37,7 +37,7 @@ module JellyfishAzure
         @_order_questions ||= begin
           template_url = settings[:az_custom_template_uri]
           template_content = open(template_url).read
-          @template = JellyfishAzure::Service::DeploymentTemplate.new template_content
+          @template = JellyfishAzure::Cloud::DeploymentTemplate.new template_content
 
           default_questions = [
             { label: 'Location', name: :az_custom_location, value_type: :string, field: :az_location, required: true }

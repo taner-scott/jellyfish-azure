@@ -1,5 +1,5 @@
 module JellyfishAzure
-  module Service
+  module Cloud
     class DeploymentTemplateParameter
       TYPE_HASH = {
         'string' => :string,

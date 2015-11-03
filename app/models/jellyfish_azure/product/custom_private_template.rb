@@ -19,7 +19,7 @@ module JellyfishAzure
         _, content = client.blobs.get_blob storage_account_container, storage_account_blob
 
         # parse the template
-        JellyfishAzure::Service::DeploymentTemplate.new content
+        JellyfishAzure::Cloud::DeploymentTemplate.new content
       rescue Faraday::ConnectionFailed => e
         logger.debug e.message
 
@@ -63,7 +63,7 @@ module JellyfishAzure
                               storage_blob_host: "https://#{storage_account_name}.blob.core.windows.net")
         _, content = client.blobs.get_blob storage_account_container, storage_account_blob
 
-        @template = JellyfishAzure::Service::DeploymentTemplate.new content
+        @template = JellyfishAzure::Cloud::DeploymentTemplate.new content
 
         @template.find_allowed_values parameter_name
       end
@@ -79,7 +79,7 @@ module JellyfishAzure
                                 storage_blob_host: "https://#{storage_account_name}.blob.core.windows.net")
           _, content = client.blobs.get_blob storage_account_container, storage_account_blob
 
-          @template = JellyfishAzure::Service::DeploymentTemplate.new content
+          @template = JellyfishAzure::Cloud::DeploymentTemplate.new content
 
           default_questions = [
             { label: 'Location', name: :az_custom_location, value_type: :string, field: :az_location, required: true }

@@ -1,5 +1,5 @@
 module JellyfishAzure
-  module Service
+  module Operation
     class ValidationError < StandardError
     end
   end

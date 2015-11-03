@@ -1,5 +1,5 @@
 module JellyfishAzure
-  module Service
+  module Cloud
     class DeploymentTemplate
       def initialize(file)
         @_data_hash = JSON.parse(file)
