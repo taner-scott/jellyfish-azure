@@ -1,3 +1,4 @@
+
 module JellyfishAzure
   module Operation
     class AzureOperation
@@ -61,7 +62,7 @@ module JellyfishAzure
           fail AzureDeploymentErrors, errors
         end
 
-        outputs.each { |key, value| @service.service_outputs.create(name: key, value: value['value'], value_type: :string) }
+        outputs.each { |key, value| @service.service_outputs.create(name: key, value: value[:value], value_type: :string) }
 
         set_status :available, 'Deployment successful'
 
@@ -74,9 +75,6 @@ module JellyfishAzure
       rescue MsRestAzure::AzureOperationError => e
         handle_azure_error e
       rescue => e
-        Delayed::Worker.logger.error e.message
-        Delayed::Worker.logger.error e.backtrace
-
         handle_error "Unexpected error: #{e.class}: #{e.message}"
       end
 

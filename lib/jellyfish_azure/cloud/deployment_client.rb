@@ -33,8 +33,8 @@ module JellyfishAzure
         result = promise.value!
 
         result.body.value
-            .select { |item| item.properties.provisioning_state == 'Failed' }
-            .map { |item| AzureDeploymentError.new(item) }
+          .select { |item| item.properties.provisioning_state == 'Failed' }
+          .map { |item| AzureDeploymentError.new item.properties.status_message['error']['message'] }
       end
     end
   end

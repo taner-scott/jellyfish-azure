@@ -42,7 +42,7 @@ module JellyfishAzure
               name: prefix + parameter.name,
               value_type: parameter.type,
               field: parameter.field,
-              required: parameter.type
+              required: parameter.required
             }
           end
       end

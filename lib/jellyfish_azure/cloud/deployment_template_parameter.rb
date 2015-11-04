@@ -25,14 +25,14 @@ module JellyfishAzure
 
       def initialize(key, values)
         @name = key
-        @type = TYPE_HASH[values['type']]
+        @type = TYPE_HASH[values['type'].downcase]
         @default_value = values['defaultValue']
         @allowed_value = values['allowedValues']
 
         if !@allowed_value.nil?
           @field = :az_choice
         else
-          @field = FIELD_HASH[values['type']]
+          @field = FIELD_HASH[values['type'].downcase]
         end
 
         @required = @default_value.nil?

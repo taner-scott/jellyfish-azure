@@ -1,7 +1,3 @@
-require 'ms_rest_azure'
-require 'azure_mgmt_storage'
-require 'azure_mgmt_resources'
-
 module JellyfishAzure
   module Cloud
     class AzureClient
