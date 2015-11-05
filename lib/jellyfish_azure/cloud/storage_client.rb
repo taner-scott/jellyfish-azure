@@ -41,6 +41,3 @@ module JellyfishAzure
     end
   end
 end
-# get blob
-# get blob sas
-# validate blob

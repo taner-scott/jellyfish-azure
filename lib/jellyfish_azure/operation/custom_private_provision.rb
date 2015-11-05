@@ -1,6 +1,6 @@
 module JellyfishAzure
   module Operation
-    class CustomPrivateProvision < AzureOperation
+    class CustomPrivateProvision < AzureProvisionOperation
       def initialize(cloud_client, provider, product, service)
         super cloud_client, provider, product, service
       end

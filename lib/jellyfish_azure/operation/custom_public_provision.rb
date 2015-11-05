@@ -2,7 +2,7 @@ require 'open-uri'
 
 module JellyfishAzure
   module Operation
-    class CustomPublicProvision < AzureOperation
+    class CustomPublicProvision < AzureProvisionOperation
       def initialize(cloud_client, provider, product, service)
         super cloud_client, provider, product, service
       end

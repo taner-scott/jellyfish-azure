@@ -3,17 +3,17 @@ require 'jellyfish_azure'
 
 module JellyfishAzure
   module Operation
-    describe 'AzureOperation#execute' do
-      let (:service) { create :service }
-
+    describe 'AzureProvisionOperation#execute' do
       let (:cloud_client) {
-        double('cloud_client',
-          deployment: double('resource_group_client'),
-          resource_group: double('deployment_client'))
+        OpenStruct.new(
+          storage: double(),
+          deployment: double(),
+          resource_group: double())
       }
 
+      let (:service) { create :service }
       let (:operation) {
-        result = JellyfishAzure::Operation::AzureOperation.new cloud_client, {}, {}, service
+        result = JellyfishAzure::Operation::AzureProvisionOperation.new cloud_client, {}, {}, service
 
         allow(result).to receive(:setup)
         allow(result).to receive(:template_url).and_return('https://test.com/mytemplate.json')

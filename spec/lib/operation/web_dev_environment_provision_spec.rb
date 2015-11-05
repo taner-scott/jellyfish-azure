@@ -4,17 +4,16 @@ require 'jellyfish_azure'
 module JellyfishAzure
   module Operation
     describe 'WebDevEnvironmentProvision#execute' do
+      let (:cloud_client) {
+        OpenStruct.new(
+          storage: double(),
+          deployment: double(),
+          resource_group: double())
+      }
+
       let (:service) { create :service }
       let (:product) { create :product }
       let (:provider) { create :provider }
-
-      let (:cloud_client) {
-        double('cloud_client',
-          storage: double('storage_client'),
-          deployment: double('resource_group_client'),
-          resource_group: double('deployment_client'))
-      }
-
       let (:operation) {
         JellyfishAzure::Operation::WebDevEnvironmentProvision.new cloud_client, provider, product, service
       }
@@ -27,9 +26,7 @@ module JellyfishAzure
 
       context 'when requesting the location' do
         before {
-          allow(service).to receive(:settings).and_return({
-            az_custom_location: 'westus'
-          })
+          service.settings[:az_custom_location] = 'westus'
         }
         it { expect(operation.location).to eq 'westus' }
       end

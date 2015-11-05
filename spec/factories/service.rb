@@ -1,48 +1,22 @@
 
 module JellyfishAzure
   module Factories
-    class DummyProvider
-      attr_accessor :settings
-
-      def save!
-      end
-    end
-
-    class DummyProduct
-      attr_accessor :settings
-
-      def save!
-      end
-    end
-
-    class DummyService
-      attr_accessor :name, :uuid, :status, :status_msg, :service_outputs, :settings
-
-      def initialize
-        @service_outputs = DummyServiceOutputs.new
-      end
-
-      def save
-      end
-
-      def save!
-      end
-    end
-
-    class DummyServiceOutputs
-      attr_reader :outputs
-
-      def initialize
-        @outputs = []
-      end
-
-      def create(values)
-        @outputs << values
-      end
-    end
-
     FactoryGirl.define do
-      factory :service, class: DummyService do
+      factory :service_outputs, class: OpenStruct do
+        skip_create
+
+        outputs []
+
+        after(:create) do |obj, evaluator|
+          def obj.create(values)
+            outputs << values
+          end
+        end
+      end
+
+      factory :service, class: OpenStruct do
+        skip_create
+
         sequence :name do |n|
           "Service #{n}"
         end
@@ -50,14 +24,12 @@ module JellyfishAzure
         uuid SecureRandom.uuid
         status :pending
         settings Hash.new
-      end
+        service_outputs
 
-      factory :product, class: DummyProduct do
-        settings Hash.new
-      end
-
-      factory :provider, class: DummyProvider do
-        settings Hash.new
+        after(:create) do |obj, evaluator|
+          def obj.save
+          end
+        end
       end
     end
   end

@@ -6,7 +6,7 @@ module JellyfishAzure
     describe DeploymentTemplate do
       describe '#parameters' do
         context 'when parameters are parsed' do
-          let(:template) { JellyfishAzure::Factories.template :simple_template }
+          let(:template) { arm_template :simple_template }
 
           it 'there are two parameters' do
               expect(template.parameters.length).to eq 2
@@ -43,7 +43,7 @@ module JellyfishAzure
         end
 
         context 'when parameter types are parsed' do
-          let(:template) { JellyfishAzure::Factories.template :all_types_template }
+          let(:template) { arm_template :all_types_template }
 
           it 'the stringParam is of type string' do
             expect(template.parameters[0].type).to eq :string
@@ -63,7 +63,7 @@ module JellyfishAzure
         end
 
         context 'when parameter field types are parsed' do
-          let(:template) { JellyfishAzure::Factories.template :all_types_template }
+          let(:template) { arm_template :all_types_template }
 
           it 'the stringParam has field type text' do
             expect(template.parameters[0].field).to eq :text
@@ -89,7 +89,7 @@ module JellyfishAzure
 
       describe '#get_questions' do
         context 'when questions are generated' do
-          let(:template) { JellyfishAzure::Factories.template :simple_template }
+          let(:template) { arm_template :simple_template }
 
           let (:questions) {
             template.get_questions('prefix_', [])
@@ -121,7 +121,7 @@ module JellyfishAzure
         end
 
         context 'when parameters are filtered' do
-          let(:template) { JellyfishAzure::Factories.template :simple_template }
+          let(:template) { arm_template :simple_template }
 
           let (:questions) {
             template.get_questions('prefix_', [ 'param1' ])

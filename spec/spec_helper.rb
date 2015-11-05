@@ -100,5 +100,5 @@ RSpec.configure do |config|
 # rubocop:enable all
 end
 
-Dir['./spec/support/**/*.rb'].each { |dep| require dep }
 Dir['./spec/factories/**/*.rb'].each { |dep| require dep }
+Dir['./spec/support/**/*.rb'].each { |dep| require dep }

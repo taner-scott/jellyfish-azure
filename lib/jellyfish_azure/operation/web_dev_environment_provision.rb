@@ -1,6 +1,6 @@
 module JellyfishAzure
   module Operation
-    class WebDevEnvironmentProvision < AzureOperation
+    class WebDevEnvironmentProvision < AzureProvisionOperation
       def initialize(cloud_client, provider, product, service)
         super cloud_client, provider, product, service
       end

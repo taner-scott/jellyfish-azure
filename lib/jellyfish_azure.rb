@@ -18,7 +18,7 @@ require 'jellyfish_azure/cloud/azure_client.rb'
 require 'jellyfish_azure/operation/validation_error.rb'
 require 'jellyfish_azure/operation/azure_deployment_error.rb'
 require 'jellyfish_azure/operation/azure_deployment_errors.rb'
-require 'jellyfish_azure/operation/azure_operation.rb'
+require 'jellyfish_azure/operation/azure_provision_operation.rb'
 
 require 'jellyfish_azure/operation/custom_private_provision.rb'
 require 'jellyfish_azure/operation/custom_public_provision.rb'

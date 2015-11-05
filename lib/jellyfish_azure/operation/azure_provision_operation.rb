@@ -1,7 +1,7 @@
 
 module JellyfishAzure
   module Operation
-    class AzureOperation
+    class AzureProvisionOperation
       DEPLOYMENT_NAME = 'Deployment'
       WAIT_TIMEOUT = 14_400
       WAIT_DELAY = 15

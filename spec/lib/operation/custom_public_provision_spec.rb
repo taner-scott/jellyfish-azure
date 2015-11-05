@@ -4,34 +4,29 @@ require 'jellyfish_azure'
 module JellyfishAzure
   module Operation
     describe 'CustomPublicProvision#execute' do
+      let (:cloud_client) {
+        OpenStruct.new(
+          storage: double(),
+          deployment: double(),
+          resource_group: double())
+      }
+
       let (:service) { create :service }
       let (:product) { create :product }
       let (:provider) { create :provider }
-
-      let (:cloud_client) {
-        double('cloud_client',
-          storage: double('storage_client'),
-          deployment: double('resource_group_client'),
-          resource_group: double('deployment_client'))
-      }
-
       let (:operation) {
         JellyfishAzure::Operation::CustomPublicProvision.new cloud_client, provider, product, service
       }
 
       context 'when a valid template url is provided' do
         before {
-          allow(product).to receive(:settings).and_return({
-            az_custom_template_uri: 'https://templates.com/test_template.json'
-          })
-          allow(service).to receive(:settings).and_return({
-            az_custom_location: 'westus',
-            az_custom_param_param1: 'value1',
-            az_custom_param_param2: 'value2'
-          })
+          product.settings[:az_custom_template_uri] = 'https://templates.com/test_template.json'
+          service.settings[:az_custom_location] = 'westus'
+          service.settings[:az_custom_param_param1] = 'value1'
+          service.settings[:az_custom_param_param2] = 'value2'
 
           allow(operation).to receive(:open).with('https://templates.com/test_template.json')
-            .and_return(JellyfishAzure::Factories.template_file(:simple_template))
+            .and_return(arm_template_file(:simple_template))
 
           operation.setup
         }
@@ -57,9 +52,7 @@ module JellyfishAzure
 
       context 'when an invalid template url is provided' do
         before {
-          allow(product).to receive(:settings).and_return({
-            az_custom_template_uri: 'https://templates.com/test_template.json'
-          })
+          product.settings[:az_custom_template_uri] = 'https://templates.com/test_template.json'
 
           allow(operation).to receive(:open).with('https://templates.com/test_template.json')
             .and_raise(OpenURI::HTTPError.new('test failure', ''))
