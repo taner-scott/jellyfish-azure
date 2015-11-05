@@ -1,5 +1,6 @@
 require 'rails'
 require 'ms_rest_azure'
+require 'azure'
 require 'azure_mgmt_storage'
 require 'azure_mgmt_resources'
 require 'json'

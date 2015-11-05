@@ -11,13 +11,11 @@ module JellyfishAzure
         storage_account_container = @product.settings[:az_custom_container]
         storage_account_blob = @product.settings[:az_custom_blob]
 
-        client = Azure.client(storage_account_name: storage_account_name, storage_access_key: storage_account_key,
-                              storage_blob_host: "https://#{storage_account_name}.blob.core.windows.net")
-        _, content = client.blobs.get_blob storage_account_container, storage_account_blob
+        content = @cloud_client.storage.get_blob storage_account_name, storage_account_key, storage_account_container, storage_account_blob
 
         @template = JellyfishAzure::Cloud::DeploymentTemplate.new content
-      rescue Azure::Core::Http::HTTPError => e
-        raise ValidationError, "There was a problem accessing the template: #{e.description}"
+      rescue ::Azure::Core::Error => e
+        raise ValidationError, "There was a problem accessing the template: #{e.message}"
       end
 
       def template_url
@@ -27,16 +25,8 @@ module JellyfishAzure
           storage_account_container = @product.settings[:az_custom_container]
           storage_account_blob = @product.settings[:az_custom_blob]
 
-          container_uri = URI("https://#{storage_account_name}.blob.core.windows.net/#{storage_account_container}")
-
-          signature = Azure::Blob::Auth::SharedAccessSignature.new storage_account_name, storage_account_key
-          signed_uri = signature.signed_uri container_uri,
-            permisions: :r,
-            resource: :c,
-            start: Time.now.utc.iso8601,
-            expiry: (Time.now.utc + (30 * 60)).iso8601
-
-          "#{container_uri}/#{storage_account_blob}?#{signed_uri.query}"
+          @cloud_client.storage.get_blob_sas_uri storage_account_name, storage_account_key, storage_account_container,
+            storage_account_blob, 30
         end
       end
 

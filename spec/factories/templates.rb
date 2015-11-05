@@ -11,9 +11,12 @@ module JellyfishAzure
       File.open(path)
     end
 
+    def self.template_json(name)
+      template_file(name).read
+    end
+
     def self.template(name)
-      template_json = template_file(name).read
-      JellyfishAzure::Cloud::DeploymentTemplate.new template_json
+      JellyfishAzure::Cloud::DeploymentTemplate.new template_json(name)
     end
   end
 end
