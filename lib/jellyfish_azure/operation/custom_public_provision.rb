@@ -1,3 +1,5 @@
+require 'open-uri'
+
 module JellyfishAzure
   module Operation
     class CustomPublicProvision < AzureOperation
@@ -6,7 +8,8 @@ module JellyfishAzure
       end
 
       def setup
-        template_content = open(template_url).read
+        template_file = open(template_url)
+        template_content = template_file.read
 
         @template = JellyfishAzure::Cloud::DeploymentTemplate.new template_content
       rescue OpenURI::HTTPError => e
@@ -31,8 +34,6 @@ module JellyfishAzure
 
         base_parameters.merge template_parameters
       end
-
-
     end
   end
 end

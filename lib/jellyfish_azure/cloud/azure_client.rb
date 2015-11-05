@@ -13,6 +13,10 @@ module JellyfishAzure
       def deployment
         @deployment ||= DeploymentClient.new @credentials, @subscription_id
       end
+
+      def storage
+        @storage ||= StorageClient.new @credentials, @subscription_id
+      end
     end
   end
 end

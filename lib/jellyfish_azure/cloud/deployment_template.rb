@@ -27,7 +27,7 @@ module JellyfishAzure
           # handle the case where no value is provided for boolean parameters
           value = false if value.nil? && parameter.type == :boolean
 
-          result[parameter.name] = { value: value } unless value.nil?
+          result[parameter.name.to_sym] = { value: value } unless value.nil?
         end
 
         result

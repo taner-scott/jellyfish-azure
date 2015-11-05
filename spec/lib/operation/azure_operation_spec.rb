@@ -1,6 +1,5 @@
 require 'spec_helper'
-
-require_relative '../../../lib/jellyfish_azure.rb'
+require 'jellyfish_azure'
 
 module JellyfishAzure
   module Operation

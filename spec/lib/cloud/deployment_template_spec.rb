@@ -1,22 +1,12 @@
 require 'spec_helper'
-
-require_relative '../../../lib/jellyfish_azure.rb'
+require 'jellyfish_azure'
 
 module JellyfishAzure
   module Cloud
     describe DeploymentTemplate do
-      def template
-        DeploymentTemplate.new JSON.generate({ parameters: template_parameters })
-      end
-
       describe '#parameters' do
         context 'when parameters are parsed' do
-          let(:template_parameters) {
-            {
-              param1: { type: 'string', defaultValue: 'default', allowedValues: [ 'one', 'two', 'three' ] },
-              param2: { type: 'string' }
-            }
-          }
+          let(:template) { JellyfishAzure::Factories.template :simple_template }
 
           it 'there are two parameters' do
               expect(template.parameters.length).to eq 2
@@ -53,14 +43,7 @@ module JellyfishAzure
         end
 
         context 'when parameter types are parsed' do
-          let(:template_parameters) {
-            {
-              stringParam: { type: 'string' },
-              securestringParam: { type: 'secureString' },
-              intParam: { type: 'int' },
-              boolParam: { type: 'bool' }
-            }
-          }
+          let(:template) { JellyfishAzure::Factories.template :all_types_template }
 
           it 'the stringParam is of type string' do
             expect(template.parameters[0].type).to eq :string
@@ -80,15 +63,7 @@ module JellyfishAzure
         end
 
         context 'when parameter field types are parsed' do
-          let(:template_parameters) {
-            {
-              stringParam: { type: 'string' },
-              securestringParam: { type: 'secureString' },
-              intParam: { type: 'int' },
-              boolParam: { type: 'bool' },
-              stringChoiceParam: { type: 'string', allowedValues: [ 'one', 'two' ] }
-            }
-          }
+          let(:template) { JellyfishAzure::Factories.template :all_types_template }
 
           it 'the stringParam has field type text' do
             expect(template.parameters[0].field).to eq :text
@@ -114,12 +89,7 @@ module JellyfishAzure
 
       describe '#get_questions' do
         context 'when questions are generated' do
-          let (:template_parameters) {
-            {
-              firstParam: { type: 'string' },
-              secondParam: { type: 'string' }
-            }
-          }
+          let(:template) { JellyfishAzure::Factories.template :simple_template }
 
           let (:questions) {
             template.get_questions('prefix_', [])
@@ -130,11 +100,11 @@ module JellyfishAzure
           end
 
           it 'the label is using the parameter name' do
-            expect(questions[0][:label]).to eq 'firstParam'
+            expect(questions[0][:label]).to eq 'param1'
           end
 
           it 'the name is using the parameter name and prefix' do
-            expect(questions[0][:name]).to eq 'prefix_firstParam'
+            expect(questions[0][:name]).to eq 'prefix_param1'
           end
 
           it 'the type is using the parameter type' do
@@ -142,29 +112,24 @@ module JellyfishAzure
           end
 
           it 'the type is using the parameter field' do
-            expect(questions[0][:field]).to eq :text
+            expect(questions[0][:field]).to eq :az_choice
           end
 
-          it 'the required flag is true' do
-            expect(questions[0][:required]).to be true
+          it 'the required flag is false' do
+            expect(questions[0][:required]).to be false
           end
         end
 
         context 'when parameters are filtered' do
-          let (:template_parameters) {
-            {
-              firstParam: { type: 'string' },
-              secondParam: { type: 'string' }
-            }
-          }
+          let(:template) { JellyfishAzure::Factories.template :simple_template }
 
           let (:questions) {
-            template.get_questions('prefix_', [ 'firstParam' ])
+            template.get_questions('prefix_', [ 'param1' ])
           }
 
           it 'only one question is returned' do
             expect(questions.length).to eq 1
-            expect(questions[0][:label]).to eq 'secondParam'
+            expect(questions[0][:label]).to eq 'param2'
           end
         end
       end

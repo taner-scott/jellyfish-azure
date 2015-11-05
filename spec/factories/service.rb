@@ -1,8 +1,22 @@
 
 module JellyfishAzure
   module Factories
+    class DummyProvider
+      attr_accessor :settings
+
+      def save!
+      end
+    end
+
+    class DummyProduct
+      attr_accessor :settings
+
+      def save!
+      end
+    end
+
     class DummyService
-      attr_accessor :name, :uuid, :status, :status_msg, :service_outputs
+      attr_accessor :name, :uuid, :status, :status_msg, :service_outputs, :settings
 
       def initialize
         @service_outputs = DummyServiceOutputs.new
@@ -35,6 +49,15 @@ module JellyfishAzure
 
         uuid SecureRandom.uuid
         status :pending
+        settings Hash.new
+      end
+
+      factory :product, class: DummyProduct do
+        settings Hash.new
+      end
+
+      factory :provider, class: DummyProvider do
+        settings Hash.new
       end
     end
   end

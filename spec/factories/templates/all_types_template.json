@@ -1,0 +1,21 @@
+{
+	"parameters": {
+		"stringParam": { 
+			"type": "string" 
+		},
+		"securestringParam": { 
+			"type": "secureString" 
+		},
+		"intParam": { 
+			"type": "int" 
+		},
+		"boolParam": { 
+			"type": "bool" 
+		},
+		"stringChoiceParam": { 
+			"type": "string",
+			"allowedValues": [ "one", "two" ]
+
+		}
+	}
+}
