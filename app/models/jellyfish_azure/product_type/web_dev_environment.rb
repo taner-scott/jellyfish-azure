@@ -22,10 +22,7 @@ module JellyfishAzure
       end
 
       def product_questions
-        [
-          { label: 'Web Technology', name: :az_dev_web, value_type: :string, field: :az_dev_web, required: true },
-          { label: 'DB Technology', name: :az_dev_db, value_type: :string, field: :az_dev_db, required: true }
-        ]
+        JellyfishAzure::Definition::WebDevEnvironmentDefinition.product_questions
       end
 
       def product_class

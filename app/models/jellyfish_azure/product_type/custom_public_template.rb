@@ -22,9 +22,7 @@ module JellyfishAzure
       end
 
       def product_questions
-        [
-          { label: 'Template URI', name: :az_custom_template_uri, value_type: :string, field: :text, required: true }
-        ]
+        JellyfishAzure::Definition::CustomPublicTemplateDefinition.product_questions
       end
 
       def product_class

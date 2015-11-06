@@ -2,22 +2,21 @@ module JellyfishAzure
   module Cloud
     class StorageClient
       def initialize(credentials, subscription_id)
-          @client = ::Azure::ARM::Storage::StorageManagementClient.new credentials
-          @client.subscription_id = subscription_id
+        @client = ::Azure::ARM::Storage::StorageManagementClient.new credentials
+        @client.subscription_id = subscription_id
       end
 
-      def get_blob_sas_uri(storage_account_name, storage_account_key, storage_account_container, storage_account_blob,
-                           timeout_minutes)
-          container_uri = URI("https://#{storage_account_name}.blob.core.windows.net/#{storage_account_container}")
+      def get_blob_sas_uri(storage_account_name, storage_account_key, storage_account_container, storage_account_blob, timeout_minutes)
+        container_uri = URI("https://#{storage_account_name}.blob.core.windows.net/#{storage_account_container}")
 
-          signature = Azure::Blob::Auth::SharedAccessSignature.new storage_account_name, storage_account_key
-          signed_uri = signature.signed_uri container_uri,
-            permisions: :r,
-            resource: :c,
-            start: Time.now.utc.iso8601,
-            expiry: (Time.now.utc + (timeout_minutes * 60)).iso8601
+        signature = Azure::Blob::Auth::SharedAccessSignature.new storage_account_name, storage_account_key
+        signed_uri = signature.signed_uri container_uri,
+          permisions: :r,
+          resource: :c,
+          start: Time.now.utc.iso8601,
+          expiry: (Time.now.utc + (timeout_minutes * 60)).iso8601
 
-          "#{container_uri}/#{storage_account_blob}?#{signed_uri.query}"
+        "#{container_uri}/#{storage_account_blob}?#{signed_uri.query}"
       end
 
       def get_blob(storage_account_name, storage_account_key, storage_account_container, storage_account_blob)
@@ -36,7 +35,7 @@ module JellyfishAzure
         promise = @client.storage_accounts.check_name_availability parameters
         result = promise.value!
 
-        [ result.body.name_available, result.body.message ]
+        [result.body.name_available, result.body.message]
       end
     end
   end

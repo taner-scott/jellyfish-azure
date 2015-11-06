@@ -2,8 +2,8 @@ module JellyfishAzure
   module Cloud
     class ResourceGroupClient
       def initialize(credentials, subscription_id)
-          @client = ::Azure::ARM::Resources::ResourceManagementClient.new credentials
-          @client.subscription_id = subscription_id
+        @client = ::Azure::ARM::Resources::ResourceManagementClient.new credentials
+        @client.subscription_id = subscription_id
       end
 
       def create_resource_group(resource_group_name, location)

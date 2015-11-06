@@ -6,7 +6,7 @@ module JellyfishAzure
       end
 
       def setup
-        available, message = @cloud_client.storage.check_storage_account @service.settings[:az_dev_dns]
+        available, message = @cloud_client.storage.check_name_availability @service.settings[:az_dev_dns]
 
         unless available
           fail ValidationError, message
@@ -18,7 +18,7 @@ module JellyfishAzure
       end
 
       def location
-        @service.settings[:az_custom_location]
+        @service.settings[:az_location]
       end
 
       def template_parameters

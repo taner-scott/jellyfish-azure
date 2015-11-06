@@ -1,13 +1,12 @@
 module JellyfishAzure
   module Product
     class WebDevEnvironment < JellyfishAzure::Product::AzureProduct
+      def template_definition
+        @template_definition ||= JellyfishAzure::Definition::WebDevEnvironmentDefinition.new
+      end
+
       def order_questions
-        [
-          { label: 'Location', name: :az_dev_location, value_type: :string, field: :az_location, required: true },
-          { label: 'Web Server DNS Name', name: :az_dev_dns, value_type: :string, field: :text, required: true },
-          { label: 'Admin Username', name: :az_username, value_type: :string, field: :text, required: true },
-          { label: 'Admin Password', name: :az_password, value_type: :string, field: :password, required: true }
-        ]
+        template_definition.order_questions
       end
 
       def service_class

@@ -48,19 +48,7 @@ module JellyfishAzure
 
         set_status :provisioning, 'Provisioning service'
 
-        state = nil
-        outputs = nil
-        WaitUtil.wait_for_condition 'deployment', timeout_sec: deploy_timeout, delay_sec: deploy_delay do
-          state, outputs = @cloud_client.deployment.get_deployment_status resource_group_name, DEPLOYMENT_NAME
-
-          (state != 'Accepted' && state != 'Running')
-        end
-
-        if (state == 'Failed')
-          errors = @cloud_client.deployment.get_deployment_errors resource_group_name, DEPLOYMENT_NAME
-
-          fail AzureDeploymentErrors, errors
-        end
+        outputs = wait_for_deployment DEPLOYMENT_NAME
 
         outputs.each { |key, value| @service.service_outputs.create(name: key, value: value[:value], value_type: :string) }
 
@@ -69,7 +57,7 @@ module JellyfishAzure
       rescue WaitUtil::TimeoutError
         handle_error 'The provisioning operation timed out.'
       rescue ValidationError => e
-        handle_error "Validation error: #{e.message}"
+        handle_error e.to_s
       rescue AzureDeploymentErrors => e
         handle_error e.errors.map(&:error_message).join "\n"
       rescue MsRestAzure::AzureOperationError => e
@@ -93,6 +81,26 @@ module JellyfishAzure
       def handle_azure_error(error)
         message = error.body.nil? ? error.message : error.body['error']['message']
         set_status :terminated, message
+      end
+
+      private
+
+      def wait_for_deployment(deployment_name)
+        state = nil
+        outputs = nil
+        WaitUtil.wait_for_condition 'deployment', timeout_sec: deploy_timeout, delay_sec: deploy_delay do
+          state, outputs = @cloud_client.deployment.get_deployment_status resource_group_name, deployment_name
+
+          (state != 'Accepted' && state != 'Running')
+        end
+
+        if (state == 'Failed')
+          errors = @cloud_client.deployment.get_deployment_errors resource_group_name, deployment_name
+
+          fail AzureDeploymentErrors, errors
+        end
+
+        outputs
       end
     end
   end

@@ -31,6 +31,10 @@ module JellyfishAzure
       def subscription_id
         settings[:subscription_id]
       end
+
+      def cloud_client
+        @cloud_client ||= JellyfishAzure::Cloud::AzureClient.new credentials, subscription_id
+      end
     end
   end
 end

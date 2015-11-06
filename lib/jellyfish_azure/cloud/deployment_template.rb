@@ -10,6 +10,9 @@ module JellyfishAzure
         @_parameters ||= params.map { |key, value| DeploymentTemplateParameter.new(key, value) }
       end
 
+      def validate
+      end
+
       def find_allowed_values(parameter_name)
         parameter_name = parameter_name[16..-1]
 

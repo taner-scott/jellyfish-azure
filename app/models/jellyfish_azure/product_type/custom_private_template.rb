@@ -23,12 +23,7 @@ blob storage'
       end
 
       def product_questions
-        [
-          { label: 'Storage Account Name', name: :az_custom_name, value_type: :string, field: :text, required: true },
-          { label: 'Storage Account Key', name: :az_custom_key, value_type: :string, field: :password, required: true },
-          { label: 'Storage Account Container', name: :az_custom_container, value_type: :string, field: :text, required: true },
-          { label: 'Storage Account Blob', name: :az_custom_blob, value_type: :string, field: :text, required: true }
-        ]
+        JellyfishAzure::Definition::CustomPrivateTemplateDefinition.product_questions
       end
 
       def product_class

@@ -2,8 +2,8 @@ module JellyfishAzure
   module Cloud
     class DeploymentClient
       def initialize(credentials, subscription_id)
-          @client = ::Azure::ARM::Resources::ResourceManagementClient.new credentials
-          @client.subscription_id = subscription_id
+        @client = ::Azure::ARM::Resources::ResourceManagementClient.new credentials
+        @client.subscription_id = subscription_id
       end
 
       def create_deployment(resource_group_name, deployment_name, template_url, template_parameters)
@@ -25,7 +25,7 @@ module JellyfishAzure
         promise = @client.deployments.get resource_group_name, deployment_name
         result = promise.value!
 
-        [ result.body.properties.provisioning_state, result.body.properties.outputs || {} ]
+        [result.body.properties.provisioning_state, result.body.properties.outputs || {}]
       end
 
       def get_deployment_errors(resource_group_name, deployment_name)

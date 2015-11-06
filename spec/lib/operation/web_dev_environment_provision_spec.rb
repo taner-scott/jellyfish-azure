@@ -26,7 +26,7 @@ module JellyfishAzure
 
       context 'when requesting the location' do
         before {
-          service.settings[:az_custom_location] = 'westus'
+          service.settings[:az_location] = 'westus'
         }
         it { expect(operation.location).to eq 'westus' }
       end
@@ -58,7 +58,7 @@ module JellyfishAzure
         }
 
         it 'setup succeeded' do
-          allow(cloud_client.storage).to receive(:check_storage_account)
+          allow(cloud_client.storage).to receive(:check_name_availability)
             .with('dev_dns')
             .and_return([true, ''])
 
@@ -66,11 +66,11 @@ module JellyfishAzure
         end
 
         it 'dns name validation failed' do
-          allow(cloud_client.storage).to receive(:check_storage_account)
+          allow(cloud_client.storage).to receive(:check_name_availability)
             .with('dev_dns')
             .and_return([false, 'test failure'])
 
-          expect { operation.setup }.to raise_error(ValidationError, 'test failure')
+          expect { operation.setup }.to raise_error(ValidationError, 'Validation error: test failure')
         end
       end
     end

@@ -5,15 +5,12 @@ module JellyfishAzure
     class CustomPublicProvision < AzureProvisionOperation
       def initialize(cloud_client, provider, product, service)
         super cloud_client, provider, product, service
+
+        @definition = JellyfishAzure::Definition::CustomPublicTemplateDefinition.new cloud_client, product
       end
 
       def setup
-        template_file = open(template_url)
-        template_content = template_file.read
-
-        @template = JellyfishAzure::Cloud::DeploymentTemplate.new template_content
-      rescue OpenURI::HTTPError => e
-        raise ValidationError, e.message
+        @definition.template
       end
 
       def template_url
@@ -21,11 +18,11 @@ module JellyfishAzure
       end
 
       def location
-        @service.settings[:az_custom_location]
+        @service.settings[:az_location]
       end
 
       def template_parameters
-        template_parameters = @template.apply_parameters 'az_custom_param_', @service.settings
+        template_parameters = @definition.template.apply_parameters 'az_custom_param_', @service.settings
 
         base_parameters = {
           templateBaseUrl: { value: URI.join(template_url, '.').to_s },
