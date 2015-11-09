@@ -14,7 +14,9 @@ module JellyfishAzure
         promise.value!
       end
 
-      def remove_resource_group
+      def remove_resource_group(resource_group_name)
+        promise = @client.resource_groups.delete(resource_group_name)
+        promise.value!
       end
     end
   end
