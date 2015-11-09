@@ -12,7 +12,6 @@ module JellyfishAzure
       def validate_product
         template_definition.template.validate
       rescue JellyfishAzure::ValidationError => e
-        puts e.message
         errors.add e.field || :base, e.message
       end
 

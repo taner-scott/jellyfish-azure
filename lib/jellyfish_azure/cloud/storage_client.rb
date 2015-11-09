@@ -52,7 +52,7 @@ module JellyfishAzure
 
       private
 
-      def convert_azure_http_error e
+      def convert_azure_http_error(e)
         case e.type
         when 'BlobNotFound'
           CloudArgumentError.new 'The specified file does not exist', :storage_account_blob
@@ -65,7 +65,7 @@ module JellyfishAzure
         end
       end
 
-      def convert_blob_argument_error e
+      def convert_blob_argument_error(e)
         case e.message
         when 'invalid base64'
           CloudArgumentError.new 'Invalid base64 value', :storage_account_key

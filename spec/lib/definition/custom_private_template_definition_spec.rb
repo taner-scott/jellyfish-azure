@@ -75,8 +75,6 @@ module JellyfishAzure
         it_should_behave_like 'handles_error', 'invalid service container', :storage_account_container, :az_custom_container
         it_should_behave_like 'handles_error', 'invalid service blob', :storage_account_blob, :az_custom_blob
 
-
-
         context 'invalid template contents' do
           before do
             allow(cloud_client.storage).to receive(:get_blob)
