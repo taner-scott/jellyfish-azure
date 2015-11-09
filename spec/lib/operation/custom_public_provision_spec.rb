@@ -61,8 +61,11 @@ module JellyfishAzure
         end
 
         it do
-          expect { operation.setup }.to raise_error(ValidationError,
-            'Validation error: az_custom_template_url: The template URL provided could not be found')
+          expect { operation.setup }.to raise_error(
+            ValidationError,
+            'The template URL provided could not be found') do |error|
+              expect(error.field).to eq :az_custom_template_url
+            end
         end
       end
     end

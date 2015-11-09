@@ -47,34 +47,24 @@ module JellyfishAzure
 
         # parse the template
         JellyfishAzure::DeploymentTemplate.new content
-      rescue Faraday::ConnectionFailed => _
-        # logger.debug e.message
-
-        raise ValidationError.new 'Name or service not known', :az_custom_name
-      rescue Azure::Core::Http::HTTPError => e
-        # logger.debug e.message
-
-        case e.type
-        when 'BlobNotFound'
-          raise ValidationError.new 'The specified file does not exist', :az_custom_blob
-        when 'ContainerNotFound'
-          raise ValidationError.new 'The specified container does not exist', :az_custom_container
-        when 'AuthenticationFailed'
-          raise ValidationError.new 'The storage account key is invalid', :az_custom_key
-        else
-          raise ValidationError, 'Unknown error'
-        end
+      rescue JellyfishAzure::Cloud::CloudArgumentError => e
+        raise ValidationError.new e.message, convert_blob_argument(e.field)
       rescue JSON::ParserError => _
         # logger.debug e.message
 
         raise ValidationError.new 'There was a problem parsing the template', :az_custom_blob
-      rescue ArgumentError => e
-        # logger.debug e.message
-        case e.message
-        when 'invalid base64'
-          raise ValidationError.new 'Invalid base64 value', :az_custom_key
-        else
-          raise ValidationError, 'Unknown error'
+      end
+
+      def convert_blob_argument(argument)
+        case argument
+        when :storage_account_name
+          :az_custom_name
+        when :storage_account_key
+          :az_custom_key
+        when :storage_account_container
+          :az_custom_container
+        when :storage_account_blob
+          :az_custom_blob
         end
       end
     end

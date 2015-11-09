@@ -17,6 +17,7 @@ require 'jellyfish_azure/cloud/deployment_client.rb'
 require 'jellyfish_azure/cloud/resource_group_client.rb'
 require 'jellyfish_azure/cloud/storage_client.rb'
 require 'jellyfish_azure/cloud/azure_client.rb'
+require 'jellyfish_azure/cloud/cloud_argument_error.rb'
 
 require 'jellyfish_azure/definition/custom_private_template_definition.rb'
 require 'jellyfish_azure/definition/custom_public_template_definition.rb'

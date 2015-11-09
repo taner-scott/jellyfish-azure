@@ -66,7 +66,9 @@ module JellyfishAzure
             .with('dev_dns')
             .and_return([false, 'test failure'])
 
-          expect { operation.setup }.to raise_error(ValidationError, 'Validation error: test failure')
+          expect { operation.setup }.to raise_error(ValidationError, 'test failure') do |error|
+            expect(error.field).to be_nil
+          end
         end
       end
     end

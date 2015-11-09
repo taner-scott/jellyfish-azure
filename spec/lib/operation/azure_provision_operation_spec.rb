@@ -84,7 +84,7 @@ module JellyfishAzure
 
         context 'status' do
           it { expect(service_result.status).to eq :terminated }
-          it { expect(service_result.status_msg).to eq 'Validation error: test failure' }
+          it { expect(service_result.status_msg).to eq 'test failure' }
         end
       end
 

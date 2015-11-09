@@ -4,7 +4,7 @@ require 'azure/core/http/http_error.rb'
 
 module JellyfishAzure
   module Definition
-    describe 'CustomPublicTemplateDefinition' do
+    describe 'CustomPrivateTemplateDefinition' do
       let(:product) { create :product }
       let(:cloud_client) do
         OpenStruct.new(
@@ -53,18 +53,29 @@ module JellyfishAzure
       end
 
       context 'when template loading fails' do
-        context 'invalid service name' do
-          before do
-            allow(cloud_client.storage).to receive(:get_blob)
-              .and_raise(Faraday::ConnectionFailed, 'test failure')
-          end
+        shared_examples_for 'handles_error' do |name, cloud_field, jellyfish_field|
+          context name do
+            before do
+              allow(cloud_client.storage).to receive(:get_blob)
+                .and_raise(JellyfishAzure::Cloud::CloudArgumentError.new('test failure', cloud_field))
+            end
 
-          it do
-            expect { definition.template }.to raise_error(
-              ValidationError,
-              'Validation error: az_custom_name: Name or service not known')
+            it do
+              expect { definition.template }.to raise_error(
+                ValidationError,
+                'test failure') do |error|
+                  expect(error.field).to eq jellyfish_field
+                end
+            end
           end
         end
+
+        it_should_behave_like 'handles_error', 'invalid service name', :storage_account_name, :az_custom_name
+        it_should_behave_like 'handles_error', 'invalid service key', :storage_account_key, :az_custom_key
+        it_should_behave_like 'handles_error', 'invalid service container', :storage_account_container, :az_custom_container
+        it_should_behave_like 'handles_error', 'invalid service blob', :storage_account_blob, :az_custom_blob
+
+
 
         context 'invalid template contents' do
           before do
@@ -73,8 +84,11 @@ module JellyfishAzure
           end
 
           it do
-            expect { definition.template }.to raise_error ValidationError,
-              'Validation error: az_custom_blob: There was a problem parsing the template'
+            expect { definition.template }.to raise_error(
+              ValidationError,
+              'There was a problem parsing the template') do |error|
+                expect(error.field).to eq :az_custom_blob
+              end
           end
         end
       end

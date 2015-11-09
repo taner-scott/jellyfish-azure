@@ -25,6 +25,18 @@ module JellyfishAzure
         _, content = client.blobs.get_blob storage_account_container, storage_account_blob
 
         content
+      rescue Faraday::ConnectionFailed => _
+        # logger.debug e.message
+
+        raise CloudArgumentError.new 'Name or service not known', :storage_account_name
+      rescue Azure::Core::Http::HTTPError => e
+        # logger.debug e.message
+
+        raise convert_azure_http_error e
+      rescue ArgumentError => e
+        # logger.debug e.message
+
+        raise convert_blob_argument_error e
       end
 
       def check_name_availability(name)
@@ -36,6 +48,30 @@ module JellyfishAzure
         result = promise.value!
 
         [result.body.name_available, result.body.message]
+      end
+
+      private
+
+      def convert_azure_http_error e
+        case e.type
+        when 'BlobNotFound'
+          CloudArgumentError.new 'The specified file does not exist', :storage_account_blob
+        when 'ContainerNotFound'
+          CloudArgumentError.new 'The specified container does not exist', :storage_account_container
+        when 'AuthenticationFailed'
+          CloudArgumentError.new 'The storage account key is invalid', :storage_account_key
+        else
+          CloudArgumentError.new 'Unknown error'
+        end
+      end
+
+      def convert_blob_argument_error e
+        case e.message
+        when 'invalid base64'
+          CloudArgumentError.new 'Invalid base64 value', :storage_account_key
+        else
+          CloudArgumentError.new 'Unknown error'
+        end
       end
     end
   end

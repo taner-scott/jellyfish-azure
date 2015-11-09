@@ -59,7 +59,9 @@ module JellyfishAzure
           it do
             expect { definition.template }.to raise_error(
               ValidationError,
-              'Validation error: az_custom_template_url: The template URL provided could not be found')
+              'The template URL provided could not be found') do |error|
+                expect(error.field).to eq :az_custom_template_url
+              end
           end
         end
 
@@ -73,8 +75,11 @@ module JellyfishAzure
           end
 
           it do
-            expect { definition.template }.to raise_error ValidationError,
-              'Validation error: az_custom_template_url: There was a problem parsing the template'
+            expect { definition.template }.to raise_error(
+              ValidationError,
+              'There was a problem parsing the template') do |error|
+                expect(error.field).to eq :az_custom_template_url
+              end
           end
         end
       end
