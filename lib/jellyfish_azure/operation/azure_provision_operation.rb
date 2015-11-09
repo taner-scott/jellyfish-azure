@@ -66,13 +66,7 @@ module JellyfishAzure
         handle_error "Unexpected error: #{e.class}: #{e.message}"
       end
 
-      protected
-
-      def set_status(status, message)
-        @service.status = status
-        @service.status_msg = message
-        @service.save
-      end
+      private
 
       def handle_error(message)
         set_status :terminated, message
@@ -83,7 +77,11 @@ module JellyfishAzure
         set_status :terminated, message
       end
 
-      private
+      def set_status(status, message)
+        @service.status = status
+        @service.status_msg = message
+        @service.save
+      end
 
       def wait_for_deployment(deployment_name)
         state = nil

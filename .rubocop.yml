@@ -39,3 +39,6 @@ Style/ClosingParenthesisIndentation:
 
 Style/StringLiterals:
   EnforcedStyle: single_quotes
+
+Rails/Delegate:
+  Enabled: false

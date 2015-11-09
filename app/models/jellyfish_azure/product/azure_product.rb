@@ -7,7 +7,6 @@ module JellyfishAzure
           { label: 'US West', value: 'westus' }
         ]
       end
-
     end
   end
 end

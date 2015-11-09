@@ -4,15 +4,15 @@ require 'jellyfish_azure'
 module JellyfishAzure
   module Operation
     describe 'AzureProvisionOperation#execute' do
-      let (:cloud_client) {
+      let(:cloud_client) do
         OpenStruct.new(
-          storage: double(),
-          deployment: double(),
-          resource_group: double())
-      }
+          storage: double,
+          deployment: double,
+          resource_group: double)
+      end
 
-      let (:service) { create :service }
-      let (:operation) {
+      let(:service) { create :service }
+      let(:operation) do
         result = JellyfishAzure::Operation::AzureProvisionOperation.new cloud_client, {}, {}, service
 
         allow(result).to receive(:setup)
@@ -21,20 +21,20 @@ module JellyfishAzure
         allow(result).to receive(:template_parameters).and_return({})
 
         result
-      }
+      end
 
-      subject(:service_result) {
+      subject(:service_result) do
         operation.execute
         service
-      }
+      end
 
       context 'when deployment successful' do
-        before {
+        before do
           allow(cloud_client.resource_group).to receive(:create_resource_group)
           allow(cloud_client.deployment).to receive(:create_deployment)
           allow(cloud_client.deployment).to receive(:get_deployment_status)
             .and_return(['Succeeded', {}])
-        }
+        end
 
         context 'status' do
           it { expect(service_result.status).to eq :available }
@@ -42,18 +42,20 @@ module JellyfishAzure
         end
 
         context 'service outputs' do
-          before {
+          before do
             allow(cloud_client.deployment).to receive(:get_deployment_status)
-              .and_return(['Succeeded', {
-                output1: { value: 'value1' },
-                output2: { value: 'value2' }
-              }])
-          }
+              .and_return([
+                'Succeeded',
+                {
+                  output1: { value: 'value1' },
+                  output2: { value: 'value2' }
+                }])
+          end
 
-          subject(:service_outputs) {
+          subject(:service_outputs) do
             operation.execute
             service.service_outputs.outputs
-          }
+          end
 
           it { expect(service_outputs.length).to eq 2 }
           it { expect(service_outputs[0]).to include(name: :output1, value: 'value1', value_type: :string) }
@@ -76,9 +78,9 @@ module JellyfishAzure
       end
 
       context 'when setup fails' do
-        before {
+        before do
           allow(operation).to receive(:setup).and_raise(ValidationError, 'test failure')
-        }
+        end
 
         context 'status' do
           it { expect(service_result.status).to eq :terminated }
@@ -88,10 +90,10 @@ module JellyfishAzure
 
       context 'when resource group creation fails' do
         context 'due to azure error' do
-          before {
+          before do
             allow(cloud_client.resource_group).to receive(:create_resource_group)
               .and_raise(MsRestAzure::AzureOperationError, 'test failure')
-          }
+          end
 
           context 'status' do
             it { expect(service_result.status).to eq :terminated }
@@ -100,10 +102,10 @@ module JellyfishAzure
         end
 
         context 'due to unknown error, status' do
-          before {
+          before do
             allow(cloud_client.resource_group).to receive(:create_resource_group)
               .and_raise(StandardError, 'test failure')
-          }
+          end
 
           context 'status' do
             it { expect(service_result.status).to eq :terminated }
@@ -113,15 +115,15 @@ module JellyfishAzure
       end
 
       context 'when deployment creation fails' do
-        before {
+        before do
           allow(cloud_client.resource_group).to receive(:create_resource_group)
-        }
+        end
 
         context 'due to azure error' do
-          before {
+          before do
             allow(cloud_client.deployment).to receive(:create_deployment)
               .and_raise(MsRestAzure::AzureOperationError, 'test failure')
-          }
+          end
 
           context 'status' do
             it { expect(service_result.status).to eq :terminated }
@@ -130,10 +132,10 @@ module JellyfishAzure
         end
 
         context 'due to unknown error, status' do
-          before {
+          before do
             allow(cloud_client.deployment).to receive(:create_deployment)
               .and_raise(StandardError, 'test failure')
-          }
+          end
 
           context 'status' do
             it { expect(service_result.status).to eq :terminated }
@@ -143,34 +145,34 @@ module JellyfishAzure
       end
 
       context 'when deployment status check fails' do
-        before {
+        before do
           allow(cloud_client.resource_group).to receive(:create_resource_group)
           allow(cloud_client.deployment).to receive(:create_deployment)
-        }
+        end
 
         context 'due to deployment error' do
-          before {
+          before do
             allow(cloud_client.deployment).to receive(:get_deployment_status)
               .and_return(['Failed', {}])
 
             allow(cloud_client.deployment).to receive(:get_deployment_errors)
               .and_return([
-                JellyfishAzure::Operation::AzureDeploymentError.new('Deployment failure 1'),
-                JellyfishAzure::Operation::AzureDeploymentError.new('Deployment failure 2')
+                JellyfishAzure::AzureDeploymentError.new('Deployment failure 1'),
+                JellyfishAzure::AzureDeploymentError.new('Deployment failure 2')
               ])
-          }
+          end
 
           context 'status' do
             it { expect(service_result.status).to eq :terminated }
-            it { expect(service_result.status_msg).to eq "Deployment failure 1\nDeployment failure 2"}
+            it { expect(service_result.status_msg).to eq "Deployment failure 1\nDeployment failure 2" }
           end
         end
 
         context 'due to azure error' do
-          before {
+          before do
             allow(cloud_client.deployment).to receive(:get_deployment_status)
               .and_raise(MsRestAzure::AzureOperationError, 'test failure')
-          }
+          end
 
           context 'status' do
             it { expect(service_result.status).to eq :terminated }
@@ -179,10 +181,10 @@ module JellyfishAzure
         end
 
         context 'due to unknown error, status' do
-          before {
+          before do
             allow(cloud_client.deployment).to receive(:get_deployment_status)
               .and_raise(StandardError, 'test failure')
-          }
+          end
 
           context 'status' do
             it { expect(service_result.status).to eq :terminated }
@@ -192,7 +194,7 @@ module JellyfishAzure
       end
 
       context 'when deployment times out' do
-        before {
+        before do
           operation.deploy_timeout = 0.2
           operation.deploy_delay = 0.1
 
@@ -200,7 +202,7 @@ module JellyfishAzure
           allow(cloud_client.deployment).to receive(:create_deployment)
           allow(cloud_client.deployment).to receive(:get_deployment_status)
             .and_return(['Running', {}])
-        }
+        end
 
         context 'status' do
           it { expect(service_result.status).to eq :terminated }

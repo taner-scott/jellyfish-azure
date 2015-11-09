@@ -5,22 +5,22 @@ require 'azure/core/http/http_error.rb'
 module JellyfishAzure
   module Operation
     describe 'CustomPrivateProvision#execute' do
-      let (:cloud_client) {
+      let(:cloud_client) do
         OpenStruct.new(
-          storage: double(),
-          deployment: double(),
-          resource_group: double())
-      }
+          storage: double,
+          deployment: double,
+          resource_group: double)
+      end
 
-      let (:service) { create :service }
-      let (:product) { create :product }
-      let (:provider) { create :provider }
-      let (:operation) {
+      let(:service) { create :service }
+      let(:product) { create :product }
+      let(:provider) { create :provider }
+      let(:operation) do
         JellyfishAzure::Operation::CustomPrivateProvision.new cloud_client, provider, product, service
-      }
+      end
 
       context 'when valid private storage settings are provided' do
-        before {
+        before do
           product.settings[:az_custom_name] = 'sa_name'
           product.settings[:az_custom_key] = 'sa_key'
           product.settings[:az_custom_container] = 'sa_container'
@@ -38,7 +38,7 @@ module JellyfishAzure
             .and_return('https://templates.com/test_template.json?sastoken=token')
 
           operation.setup
-        }
+        end
 
         context 'template_url' do
           subject { operation.template_url }
@@ -59,21 +59,6 @@ module JellyfishAzure
           it { is_expected.to include(param2: { value: 'value2' }) }
         end
       end
-
-      # context 'when invald valid private storage settings are provided' do
-      #   before {
-      #     product.settings[:az_custom_name] = 'sa_name'
-      #     product.settings[:az_custom_key] = 'sa_key'
-      #     product.settings[:az_custom_container] = 'sa_container'
-      #     product.settings[:az_custom_blob] = 'sa_blob'
-
-      #     ex = Azure::Core::Error.new('test failure')
-      #     allow(cloud_client.storage).to receive(:get_blob)
-      #       .with('sa_name', 'sa_key', 'sa_container', 'sa_blob')
-      #       .and_raise(ex)
-      #   }
-      #   it { expect { operation.setup }.to raise_error(ValidationError, 'There was a problem accessing the template: test failure') }
-      # end
     end
   end
 end

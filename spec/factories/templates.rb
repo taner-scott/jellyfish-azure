@@ -7,7 +7,7 @@ module JellyfishAzure
     end
 
     def arm_template_file(name)
-      path = JellyfishAzure::Factories.template_root.join("#{name.to_s}.json")
+      path = JellyfishAzure::Factories.template_root.join("#{name}.json")
       File.open(path)
     end
 
@@ -16,8 +16,7 @@ module JellyfishAzure
     end
 
     def arm_template(name)
-      JellyfishAzure::Cloud::DeploymentTemplate.new arm_template_json(name)
+      JellyfishAzure::DeploymentTemplate.new arm_template_json(name)
     end
   end
 end
-

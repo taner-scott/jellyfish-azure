@@ -40,7 +40,7 @@ module JellyfishAzure
         content = open(template_url).read
 
         # parse the template
-        JellyfishAzure::Cloud::DeploymentTemplate.new content
+        JellyfishAzure::DeploymentTemplate.new content
       rescue OpenURI::HTTPError => _
         # logger.debug e.message
 

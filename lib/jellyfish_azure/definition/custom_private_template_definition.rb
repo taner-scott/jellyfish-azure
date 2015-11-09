@@ -46,7 +46,7 @@ module JellyfishAzure
           @product.settings[:az_custom_blob])
 
         # parse the template
-        JellyfishAzure::Cloud::DeploymentTemplate.new content
+        JellyfishAzure::DeploymentTemplate.new content
       rescue Faraday::ConnectionFailed => _
         # logger.debug e.message
 
@@ -67,7 +67,7 @@ module JellyfishAzure
       rescue JSON::ParserError => _
         # logger.debug e.message
 
-        raise ValidationError.new 'There was a problem parsing the template', :az_custom_template_url
+        raise ValidationError.new 'There was a problem parsing the template', :az_custom_blob
       rescue ArgumentError => e
         # logger.debug e.message
         case e.message

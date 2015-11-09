@@ -4,25 +4,22 @@ require 'jellyfish_azure'
 module JellyfishAzure
   module Operation
     describe 'CustomPublicProvision#execute' do
-      let (:cloud_client) {
+      let(:cloud_client) do
         OpenStruct.new(
-          storage: double(),
-          deployment: double(),
-          resource_group: double())
-      }
+          storage: double,
+          deployment: double,
+          resource_group: double)
+      end
 
-      let (:service) { create :service }
-      let (:product) { create :product }
-      let (:provider) { create :provider }
-      let (:operation) {
+      let(:service) { create :service }
+      let(:product) { create :product }
+      let(:provider) { create :provider }
+      let(:operation) do
         JellyfishAzure::Operation::CustomPublicProvision.new cloud_client, provider, product, service
-      }
-
-      before {
-      }
+      end
 
       context 'when a valid template url is provided' do
-        before {
+        before do
           product.settings[:az_custom_template_uri] = 'https://templates.com/test_template.json'
           service.settings[:az_location] = 'westus'
           service.settings[:az_custom_param_param1] = 'value1'
@@ -33,7 +30,7 @@ module JellyfishAzure
             .and_return(arm_template_file(:simple_template))
 
           operation.setup
-        }
+        end
 
         context 'template url' do
           subject { operation.template_url }
@@ -55,18 +52,18 @@ module JellyfishAzure
       end
 
       context 'when an invalid template url is provided' do
-        before {
+        before do
           product.settings[:az_custom_template_uri] = 'https://templates.com/test_template.json'
 
           allow_any_instance_of(JellyfishAzure::Definition::CustomPublicTemplateDefinition).to receive(:open)
             .with('https://templates.com/test_template.json')
             .and_raise(OpenURI::HTTPError.new('test failure', ''))
-        }
+        end
 
-        it {
+        it do
           expect { operation.setup }.to raise_error(ValidationError,
             'Validation error: az_custom_template_url: The template URL provided could not be found')
-        }
+        end
       end
     end
   end

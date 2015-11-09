@@ -1,4 +1,3 @@
-
 module JellyfishAzure
   module Factories
     FactoryGirl.define do
@@ -7,7 +6,7 @@ module JellyfishAzure
 
         outputs []
 
-        after(:create) do |obj, evaluator|
+        after(:create) do |obj|
           def obj.create(values)
             outputs << values
           end
@@ -26,7 +25,7 @@ module JellyfishAzure
         settings Hash.new
         service_outputs
 
-        after(:create) do |obj, evaluator|
+        after(:create) do |obj|
           def obj.save
           end
         end
@@ -34,4 +33,3 @@ module JellyfishAzure
     end
   end
 end
-
