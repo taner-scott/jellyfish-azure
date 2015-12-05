@@ -5,7 +5,12 @@ module JellyfishAzure
     protected
 
     def azure_error(ex)
-      render json: { error: ex.to_s }, status: :bad_request
+      logger.debug ex.to_s
+      render json: { error: 'Unexpected error' }, status: 500
+    end
+
+    def not_found
+      render status: 404, json: { error: 'Not Found' }
     end
   end
 end

@@ -20,11 +20,10 @@ Gem::Specification.new do |s|
   s.add_dependency 'rails', '~> 4.2'
   s.add_dependency 'bcrypt', '~> 3.1'
   s.add_dependency 'waitutil', '~> 0.2.1'
+  s.add_dependency 'azure', '~> 0.7.1'
   s.add_dependency 'azure_mgmt_storage', '~> 0.1.1'
   s.add_dependency 'azure_mgmt_resources', '~> 0.1.1'
 
-  s.add_development_dependency 'rspec-rails', '~> 3.3'
-  s.add_development_dependency 'factory_girl_rails', '~> 4.5'
-  s.add_development_dependency 'database_cleaner', '~> 1.4'
   s.add_development_dependency 'rubocop', '~> 0.34'
+  s.add_development_dependency 'simplecov', '~> 0.10.0'
 end

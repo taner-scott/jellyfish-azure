@@ -2,29 +2,35 @@
   'use strict';
 
   angular.module('app.resources')
-    .factory('AzureData', AzureDataFactory);
+    .factory('AzureProductData', AzureProductData)
+    .factory('AzureProductFieldData', AzureProductFieldData);
 
   /** @ngInject */
-  function AzureDataFactory($resource) {
-    var base = '/api/v1/azure/providers/:id/:action';
-    var AzureData = $resource(base, {action: '@action', id: '@id'});
+  function AzureProductFieldData($resource) {
+	  var base = '/api/v1/azure/products/:id/:action/:field';
+	  var resource = $resource(base, {action: '@action', id: '@id', parameter: '@parameter' });
 
-    AzureData.web_dev_locations = webDevLocations;
-    AzureData.azure_locations = azureLocations;
-    AzureData.azure_resource_groups = azureResourceGroups;
+	  resource.values = function (id, parameter) {
+		  return resource.query({id: id, action: 'values', field: parameter}).$promise
+		  	.then(function (results) {
+          return $.map(results, function (result) {
+            return { label: result, value: result	};
+          });
+        });
+	  };
 
-    return AzureData;
+	  return resource;
+  }
 
-    function webDevLocations(id) {
-      return AzureData.query({id: id, action: 'web_dev_locations'}).$promise;
-    }
+  /** @ngInject */
+  function AzureProductData($resource) {
+	  var base = '/api/v1/azure/products/:id/:action';
+	  var resource = $resource(base, {action: '@action', id: '@id' });
 
-    function azureLocations(id) {
-      return AzureData.query({id: id, action: 'azure_locations'}).$promise;
-    }
+	  resource.locations = function (id) {
+		  return resource.query({id: id, action: 'locations'}).$promise;
+	  };
 
-    function azureResourceGroups(id) {
-      return AzureData.query({id: id, action: 'azure_resource_groups'}).$promise;
-    }
+	  return resource;
   }
 })();

@@ -6,6 +6,7 @@ log
 tmp
 spec/dummy/log
 spec/dummy/tmp
+coverage
 
 
 # Ignore RubyMine files

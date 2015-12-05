@@ -1,0 +1,11 @@
+inherit_from:
+  - ../.rubocop.yml
+
+Style/EmptyLiteral:
+  Enabled: false
+
+Metrics/ParameterLists:
+  Enabled: false
+
+Metrics/ModuleLength:
+  Enabled: false

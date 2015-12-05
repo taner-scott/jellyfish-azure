@@ -6,11 +6,33 @@
 
   /** @ngInject */
   function initFields(Forms) {
+    Forms.fields('az_choice', {
+      type: 'select',
+      templateOptions: {
+        options: []
+      },
+      data: {
+        action: 'values'
+      },
+      controller: AzureProductFieldDataController
+    });
+
+    Forms.fields('az_location', {
+      type: 'select',
+      templateOptions: {
+        options: []
+      },
+      data: {
+        action: 'locations'
+      },
+      controller: AzureProductDataController
+    });
+
     Forms.fields('az_dev_web', {
       type: 'select',
       templateOptions: {
         options: [
-          {label: 'ASP.NET', value: 'aspnet'},
+          {label: 'NodeJS', value: 'nodejs'},
           {label: 'Ruby', value: 'ruby'}
         ]
       }
@@ -20,63 +42,9 @@
       type: 'select',
       templateOptions: {
         options: [
-          {label: 'MS Sql Server', value: 'mssqlserver'},
           {label: 'Postgres', value: 'postgres'}
         ]
       }
-    });
-
-    Forms.fields('az_dev_location', {
-      type: 'select',
-      templateOptions: {
-        options: []
-      },
-      data: {
-        action: 'web_dev_locations'
-      },
-      controller: AzureDataController
-    });
-
-    Forms.fields('azure_storage_name', {
-      type: 'text',
-      templateOptions: {
-        label: 'Name'
-      },
-      validators: {
-        available: {
-          expression: function (viewModel, modelValue, scope) {
-            debugger;
-            return false;
-          },
-          message: function () {
-            return "not available";
-          }
-        }
-      }
-    });
-
-    Forms.fields('azure_resource_group_name', {
-      type: 'async_select',
-      templateOptions: {
-        label: 'Resource Group',
-        options: []
-      },
-      data: {
-        action: 'azure_resource_groups'
-      },
-      controller: AzureDataController
-    });
-
-    Forms.fields('azure_location', {
-      type: 'async_select',
-      templateOptions: {
-        label: 'Location',
-        options: []
-      },
-      data: {
-        action: 'azure_locations'
-      },
-      controller: AzureDataController
     });
 
     Forms.fields('azure_storage_accountType', {
@@ -94,13 +62,13 @@
     });
 
     /** @ngInject */
-    function AzureDataController($scope, AzureData, Toasts) {
-      var provider = $scope.formState.provider;
+    function AzureProductDataController($scope, AzureProductData, Toasts) {
+      var product = $scope.formState.product;
       var action = $scope.options.data.action;
 
-      // Cannot do anything without a provider
-      if (angular.isUndefined(provider)) {
-        Toasts.warning('No provider set in form state', $scope.options.label);
+      // Cannot do anything without a product
+      if (angular.isUndefined(product)) {
+        Toasts.warning('No product set in form state', $scope.options.label);
         return;
       }
 
@@ -109,13 +77,59 @@
         return;
       }
 
-      $scope.to.loading = AzureData[action](provider.id).then(handleResults, handleError);
+      $scope.to.loading = AzureProductData[action](product.id).then(handleResults, handleError);
 
       function handleResults(data) {
         $scope.to.options = data;
         return data;
       }
 
+      function handleError(response) {
+        var error = response.data;
+
+        if (!error.error) {
+          error = {
+            type: 'Server Error',
+            error: 'An unknown server error has occurred.'
+          };
+        }
+
+        Toasts.error(error.error, [$scope.to.label, error.type].join('::'));
+
+        return response;
+      }
+    }
+
+    /** @ngInject */
+    function AzureProductFieldDataController($scope, AzureProductFieldData, Toasts) {
+      var product = $scope.formState.product;
+	    var field = $scope.options.model.name;
+
+      var action = $scope.options.data.action;
+
+      // Cannot do anything without a product
+      if (angular.isUndefined(product)) {
+        Toasts.warning('No product set in form state', $scope.options.label);
+        return;
+      }
+
+      // Cannot do anything without a field
+      if (angular.isUndefined(field)) {
+        Toasts.warning('No field set in form state', $scope.options.label);
+        return;
+      }
+
+      if (!action) {
+        Toasts.warning('No action set in field data', $scope.options.label);
+        return;
+      }
+
+      $scope.to.loading = AzureProductFieldData[action](product.id, $scope.options.model.name).then(handleResults, handleError);
+
+      function handleResults(data) {
+        $scope.to.options = data;
+        return data;
+      }
 
       function handleError(response) {
         var error = response.data;

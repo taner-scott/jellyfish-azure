@@ -1,0 +1,193 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "templateBaseUrl": {
+      "type": "string"
+    },
+    "serviceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Unique name for the service."
+      }
+    },
+    "external": {
+      "type": "bool",
+      "metadata": {
+        "description": "Flag indicating whether this is an internal or external asset."
+      }
+    },
+    "type": {
+      "type": "string",
+	  "allowedValues": [ "one", "two", "three" ],
+      "metadata": {
+        "description": "Parameter containing list of allowed values."
+      }
+    },
+    "dnsNameForPublicIP": {
+      "type": "string",
+      "metadata": {
+        "description": "Unique DNS Name for the Public IP used to access the IIS server."
+      }
+    },
+    "adminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "Username for Virtual Machine"
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Password for Virtual Machine"
+      }
+    }
+  },
+  "outputs": {
+    "dnsName": {
+      "type": "string",
+      "value": "[reference(variables('publicIpSettings').name).dnsSettings.fqdn]"
+    },
+    "adminUsername": {
+      "type": "string",
+      "value": "[parameters('adminUsername')]"
+    }
+  },
+  "variables": {
+    "publicIpSettings": {
+      "name": "[concat(parameters('serviceName'), '_publicIPAddress')]",
+      "dnsName": "[parameters('dnsNameForPublicIP')]"
+    },
+    "storageSettings": {
+      "name": "[parameters('dnsNameForPublicIP')]",
+      "type": "Standard_LRS"
+    },
+    "networkSettings": {
+      "name": "[concat(parameters('servicename'), '_vnet')]",
+      "addressPrefix": "10.0.0.0/16",
+      "subnet": {
+        "name": "[concat(parameters('servicename'), '_subnet')]",
+        "prefix": "10.0.0.0/24"
+      }
+    },
+    "webServerSettings": {
+      "name": "[concat(parameters('serviceName'), '_webServerVm')]",
+      "templateUrl": "[concat(parameters('templateBaseUrl'), 'web_server.json')]",
+      "machineName": "webserver",
+      "nic": {
+        "name": "[concat(parameters('serviceName'), '_webServerNic')]",
+        "publicDnsName": "[parameters('dnsNameForPublicIP')]",
+        "ipAddress": "10.0.0.100"
+      }
+    },
+    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('networkSettings').name)]",
+    "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('networkSettings').subnet.name)]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('storageSettings').name]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "accountType": "[variables('storageSettings').type]"
+      }
+    },
+    {
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('networkSettings').name]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('networkSettings').addressPrefix]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('networkSettings').subnet.name]",
+            "properties": {
+              "addressPrefix": "[variables('networkSettings').subnet.prefix]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[variables('publicIpSettings').name]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "[variables('publicIpSettings').dnsName]"
+        }
+      }
+    },
+    {
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[variables('webServerSettings').nic.name]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIpSettings').name)]",
+        "[concat('Microsoft.Network/virtualNetworks/', variables('networkSettings').name)]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[variables('webServerSettings').nic.ipAddress]",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIpSettings').name)]"
+              },
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2015-01-01",
+      "name": "webServer",
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageSettings').name)]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('webServerSettings').nic.name)]"
+      ],
+      "properties": {
+        "mode": "incremental",
+        "templateLink": {
+          "uri": "[variables('webServerSettings').templateUrl]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "templateBaseUrl": {
+            "value": "[parameters('templateBaseUrl')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "serverSettings": {
+            "value": "[variables('webServerSettings')]"
+          },
+          "subnetSettings": {
+            "value": "[variables('networkSettings').subnet]"
+          },
+          "storageSettings": {
+            "value": "[variables('storageSettings')]"
+          }
+        }
+      }
+    }
+  ]
+}
